@@ -54,6 +54,12 @@ Do not install the directory one level too high, or nest `tabby-profile-share` t
 
 See the [functional specification](docs/SPEC.md) for detailed behavior. Import has automated unit coverage, but full UI regression across Tabby releases remains on the roadmap.
 
+## Publish via GitHub Actions (no local Git or Node.js required)
+
+Maintainers can prepare npm releases entirely in the browser with the **Stage npm package** workflow. The first release uses a temporary npm stage-only token in the repository secret `NPM_STAGE_TOKEN`; subsequent releases use npm Trusted Publishing (OIDC) with no permanent token. Every release is reviewed and approved on npmjs.com with 2FA before it goes live.
+
+See the [complete step-by-step npm GitHub Actions guide](docs/PUBLISHING.md). Publishing is manual and never triggered by pushes or pull requests.
+
 ## Development
 
 Requirements: Node.js 22 and npm.
