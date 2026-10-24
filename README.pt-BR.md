@@ -1,5 +1,7 @@
 # Tabby Profile Share
 
+**Compartilhe perfis SSH do Tabby, não suas credenciais.**
+
 **Compartilhe perfis SSH e a hierarquia de pastas do Tabby com segurança.**
 
 [![CI](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml/badge.svg)](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml)
