@@ -1,9 +1,12 @@
-name: Test Profile Share
+name: Test and package Profile Share
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
 jobs:
   unit:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,12 +14,35 @@ jobs:
         with:
           node-version: '22'
       - run: npm test
+
   build:
+    name: Build and package plugin
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --legacy-peer-deps
-      - run: npm run build
+      - name: Install build dependencies
+        run: npm install --legacy-peer-deps
+      - name: Compile TypeScript / Webpack
+        run: npm run build
+      - name: Package installable artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package-out/tabby-profile-share
+          npm pack --pack-destination package-out
+          cp -R dist package.json README.md package-out/tabby-profile-share/
+          (cd package-out && zip -q -r tabby-profile-share-plugin-0.1.0.zip tabby-profile-share)
+          test -s package-out/tabby-profile-share-0.1.0.tgz
+          test -s package-out/tabby-profile-share-plugin-0.1.0.zip
+      - name: Upload compiled plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tabby-Profile-Share-0.1.0-preview
+          path: |
+            package-out/tabby-profile-share-0.1.0.tgz
+            package-out/tabby-profile-share-plugin-0.1.0.zip
+          if-no-files-found: error
+          retention-days: 30
