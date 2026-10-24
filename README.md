@@ -9,7 +9,7 @@
 
 Tabby Profile Share is an **independent, community-maintained plugin** for [Tabby by Eugeny](https://github.com/Eugeny/tabby). It does **not** modify Tabby, require the Tabby Performance fork, or have any affiliation with or endorsement from the Tabby maintainers.
 
-> **Status:** Preview 0.1.2 (unpublished) — manual installation and SSH export confirmed by an early tester. Wider compatibility, import scenarios and public npm publication remain separate validation steps. Do not assume all Tabby versions have been tested.
+> **Status:** Preview 0.1.3 (unpublished) — manual installation and SSH export confirmed by an early tester. Wider compatibility, import scenarios and public npm publication remain separate validation steps. Do not assume all Tabby versions have been tested.
 
 ## Features
 
@@ -26,6 +26,10 @@ Tabby Profile Share is an **independent, community-maintained plugin** for [Tabb
 The file contains **no stored credentials**, private key paths or login scripts. Some advanced SSH options are deliberately not portable; these must be configured on the destination machine.
 
 **Important:** Exported profiles still include hostnames, device labels, private IP addresses, and any usernames you deliberately selected. These are potentially sensitive network inventory. Treat the exported file as confidential, and inspect it before sharing it outside your organization.
+
+## Installation compatibility
+
+Version 0.1.3 removes runtime Angular/Tabby peer requirements to prevent npm `ERESOLVE` when legacy plugins (e.g., `tabby-save-output@3.1.0` with Angular 4) are present. Tabby itself supplies Angular and the Tabby APIs when loading plugins. This change does not remove required development dependencies from the project, and does not fix security issues in legacy plugins.
 
 ## Install
 
