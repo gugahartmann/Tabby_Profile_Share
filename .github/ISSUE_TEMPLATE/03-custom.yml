@@ -9,7 +9,7 @@ body:
 
         If you found a reproducible defect, please choose **Bug Report** instead. To request functionality, choose **Feature Request**.
 
-        **Do not disclose vulnerabilities or secrets here.** Follow our [security policy](../../SECURITY.md) for private reporting.
+        **Do not disclose vulnerabilities or secrets here.** Follow our [security policy](https://github.com/gugahartmann/Tabby_Profile_Share/blob/main/SECURITY.md) for private reporting.
   - type: dropdown
     id: topic
     attributes:
