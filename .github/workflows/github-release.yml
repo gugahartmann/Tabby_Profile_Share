@@ -1,0 +1,94 @@
+# A release is created only when a maintainer explicitly commits the matching
+# request file to main. Ordinary pushes/PRs do NOT publish GitHub releases or npm.
+name: GitHub Release v0.1.4
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/release-requests/v0.1.4.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-release-v0.1.4
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, audit and create public GitHub release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Verify exact release and request
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs')
+          const pkg = require('./package.json')
+          const expected = '0.1.4'
+          if (pkg.version !== expected || pkg.name !== 'tabby-profile-share') {
+            throw Error('Expected tabby-profile-share@' + expected)
+          }
+          const request = fs.readFileSync('.github/release-requests/v0.1.4.txt', 'utf8').trim()
+          if (request !== 'v0.1.4') throw Error('Invalid release request')
+          if (pkg.private || pkg.license !== 'MIT' || !pkg.keywords.includes('tabby-plugin')) {
+            throw Error('Invalid public release metadata')
+          }
+          if (Object.keys(pkg.peerDependencies ?? {}).length) {
+            throw Error('Legacy Tabby peer conflict must remain fixed')
+          }
+          console.log('Authorized release: v' + expected)
+          NODE
+      - name: Install dependencies and run tests
+        run: |
+          npm install --legacy-peer-deps --ignore-scripts --no-fund
+          npm test
+          npm audit --omit=dev --audit-level=high
+      - name: Build and inspect release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          mkdir -p release-out/tabby-profile-share
+          npm pack --pack-destination release-out
+          cp -r dist release-out/tabby-profile-share/
+          cp package.json README.md README.pt-BR.md LICENSE CHANGELOG.md release-out/tabby-profile-share/
+          (cd release-out && zip -q -r tabby-profile-share-plugin-0.1.4.zip tabby-profile-share)
+          cp examples/demo-profiles.yaml release-out/tabby-profile-share-demo-profiles.yaml
+          tar -tzf release-out/tabby-profile-share-0.1.4.tgz | tee release-out/contents.txt
+          grep -qx 'package/dist/index.js' release-out/contents.txt
+          grep -qx 'package/LICENSE' release-out/contents.txt
+          grep -qx 'package/README.md' release-out/contents.txt
+          test -s release-out/tabby-profile-share-plugin-0.1.4.zip
+          test -s release-out/tabby-profile-share-demo-profiles.yaml
+          sha256sum release-out/*.tgz release-out/*.zip release-out/*.yaml
+      - name: Create annotated GitHub release (never overwrite existing tag)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG='v0.1.4'
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists. Refusing to modify it."
+            exit 1
+          fi
+          gh release create "$TAG" \
+            release-out/tabby-profile-share-0.1.4.tgz \
+            release-out/tabby-profile-share-plugin-0.1.4.zip \
+            release-out/tabby-profile-share-demo-profiles.yaml \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title 'Tabby Profile Share v0.1.4' \
+            --notes-file docs/RELEASE_NOTES_v0.1.4.md \
+            --latest
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,isDraft,isPrerelease,assets
