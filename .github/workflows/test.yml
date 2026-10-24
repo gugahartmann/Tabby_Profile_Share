@@ -25,6 +25,8 @@ jobs:
           node-version: '22'
       - name: Install build dependencies
         run: npm install --legacy-peer-deps
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=high
       - name: Compile TypeScript / Webpack
         run: npm run build
       - name: Package installable artifacts
@@ -33,12 +35,15 @@ jobs:
           set -euo pipefail
           mkdir -p package-out/tabby-profile-share
           npm pack --pack-destination package-out
-          cp -R dist package.json README.md package-out/tabby-profile-share/
+          cp -R dist package.json README.md LICENSE package-out/tabby-profile-share/
           VERSION=$(node -p "require('./package.json').version")
           (cd package-out && zip -q -r "tabby-profile-share-plugin-${VERSION}.zip" tabby-profile-share)
           test -s "package-out/tabby-profile-share-${VERSION}.tgz"
           test -s "package-out/tabby-profile-share-plugin-${VERSION}.zip"
-          node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author?.name || !p.keywords.includes('tabby-plugin')) process.exit(1)"
+          tar -tzf "package-out/tabby-profile-share-${VERSION}.tgz" > package-out/archive-files.txt
+          grep -q "^package/LICENSE$" package-out/archive-files.txt
+          grep -q "^package/dist/index.js$" package-out/archive-files.txt
+          node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author || !p.keywords.includes('tabby-plugin')) process.exit(1)"
       - name: Upload compiled plugin
         uses: actions/upload-artifact@v6
         with:

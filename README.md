@@ -1,82 +1,87 @@
 # Tabby Profile Share
 
-Plugin independente de **exportação e importação segura de profiles SSH** para o [Tabby oficial (Eugeny)](https://github.com/Eugeny/tabby).
+**Share SSH profiles and their folder hierarchy safely with your team.**
 
-> **Estado: preview 0.1.1 (código implementado; instalação e testes visuais no Tabby oficial pendentes).** Não publicado no npm. O código e a documentação vivem exclusivamente neste repositório.
+[![CI](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml/badge.svg)](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## Objetivo
+[Português (Brasil)](README.pt-BR.md)
 
-Permitir que equipes compartilhem centenas de conexões organizadas por pastas (por exemplo, Regional → Cidade → POP) sem compartilhar senhas, chaves privadas, scripts de login ou contas pessoais.
+Tabby Profile Share is an **independent, community-maintained plugin** for [Tabby by Eugeny](https://github.com/Eugeny/tabby). It does **not** modify Tabby, require the Tabby Performance fork, or have any affiliation with or endorsement from the Tabby maintainers.
 
-### Exportação
+> **Status:** Preview 0.1.1 — manual installation and SSH export confirmed by an early tester. Wider compatibility, import scenarios and a public npm release are still being prepared. Do not assume all Tabby versions have been tested.
 
-- Tela dedicada de configuração e prévia, com **árvore gráfica de grupos/subgrupos** semelhante à do Tabby e seleção por checkboxes.
-- Seleção de pastas inteiras ou profiles individuais, preservando a hierarquia.
-- Lista de **usuários SSH únicos**, com contador de equipamentos por usuário.
-- **Todos os usuários desmarcados por padrão**; somente usernames explicitamente selecionados são copiados para o arquivo.
-- Profiles associados a usernames não selecionados continuam no arquivo, mas **sem `options.user`**.
-- **Nenhuma exportação de scripts de login**, senhas, credenciais do vault, conteúdo/caminhos de chaves privadas ou comandos que possam carregar segredos.
-- Formato versionado e portátil, sugerido: `.tabby-profiles.json`.
+## Features
 
-### Importação
+- Choose **folders, subfolders or individual SSH profiles** using a tree with checkboxes.
+- Review distinct SSH usernames from the selected profiles; **all usernames are unchecked by default**. You explicitly choose which shared usernames to include.
+- Export a portable, versioned `.tabby-profiles.json` file, preserving group hierarchy, host, SSH port and allowlisted connection settings.
+- Exclude **passwords, login scripts, key material and key paths, and proxy commands**. No Vault access or remote sync.
+- Import into **new groups and new profiles**, generating new IDs and preserving pre-existing profiles.
+- Prompt for an SSH username when imported profiles have no username; display up to four example devices; retain explicitly shared usernames.
+- Handle bundled jump-host relationships when both referenced profiles are in the export.
 
-- Prévia da estrutura a importar e resumo de impacto.
-- **Nunca sobrescrever profiles/grupos existentes**: cada importação cria novos IDs e novas entradas, mesmo quando já existe hostname ou nome semelhante.
-- Remapear relações internas (pastas, jump hosts incluídos); evitar referências quebradas.
-- Ao identificar profiles sem usuário SSH, mostrar **um modal visualmente alinhado ao prompt padrão do Tabby** pedindo um username, com até quatro nomes de equipamentos como exemplo e contagem dos demais.
-- Aplicar o username informado somente aos **novos** profiles cujo username estiver vazio; preservar usernames explicitamente compartilhados.
-- Permitir cancelar a importação ou continuar deixando esses usernames vazios.
+### What is intentionally not shared?
 
-## Compatibilidade
+The file contains **no stored credentials**, private key paths or login scripts. Some advanced SSH options are deliberately not portable; these must be configured on the destination machine.
 
-**Alvo primário:** versões suportadas do Tabby oficial [Eugeny/tabby](https://github.com/Eugeny/tabby), utilizando seus pontos de extensão públicos: `NgModule`, `SettingsTabProvider`, `ProfilesService` e `ConfigService`.
+**Important:** Exported profiles still include hostnames, device labels, private IP addresses, and any usernames you deliberately selected. These are potentially sensitive network inventory. Treat the exported file as confidential, and inspect it before sharing it outside your organization.
 
-O Tabby Performance pode usar o mesmo plugin **como consumidor**, mas o plugin não dependerá de patches, APIs privadas ou funcionalidades exclusivas desse fork.
+## Install
 
-A preview utiliza os tipos do Tabby 1.0.231-nightly.0 (Angular 15). A instalação e a compatibilidade em versões estáveis do Tabby oficial **ainda não foram certificadas**.
+### Once the package is available on npm
 
-## Especificação técnica
+Open **Tabby → Settings → Plugins**, search for **profile-share**, install `tabby-profile-share`, and restart Tabby if requested. Tabby discovers community plugins distributed with the `tabby-plugin` npm keyword.
 
-Leia [docs/SPEC.md](docs/SPEC.md) para fluxos, segurança, regras de importação e critérios de aceitação.
+**Not yet published to npm:** Until the package appears in npm search, use the preview instructions below. Publishing status should not be inferred from this README.
 
-## Desenvolvimento e teste
+### Preview: manual install on Windows
 
-Pré-requisitos: Node.js 22 e npm; a API alvo é o Tabby oficial, não o fork Tabby Performance.
+1. Download the latest compiled ZIP from [Actions](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml) (or a future GitHub release).
+2. The Actions artifact contains another ZIP with a top-level directory called `tabby-profile-share`. Extract that directory.
+3. Close Tabby fully, including the tray icon, and copy the folder to:
+   `%APPDATA%\tabby\plugins\node_modules\tabby-profile-share\`
+4. Verify that both files exist inside that directory: `package.json` and `dist/index.js`.
+5. Restart Tabby and open **Settings → Profile Sharing**.
+
+Do not install the directory one level too high, or nest `tabby-profile-share` twice.
+
+## Use
+
+**Export:** Select the folder tree, review the list of usernames (unchecked by default), explicitly enable only shared/team usernames, then click **Export**. Inspect the resulting JSON before distributing it.
+
+**Import:** Make a backup of your Tabby configuration, open the **Import** tab, select the JSON, review its counts and confirm. The plugin adds new items; it does not replace existing entries. If any imported profiles lack usernames, it asks for one username to apply to those new profiles, or allows you to leave them blank.
+
+See the [functional specification](docs/SPEC.md) for detailed behavior. Import has automated unit coverage, but full UI regression across Tabby releases remains on the roadmap.
+
+## Development
+
+Requirements: Node.js 22 and npm.
 
 ```bash
+git clone https://github.com/gugahartmann/Tabby_Profile_Share.git
+cd Tabby_Profile_Share
 npm install --legacy-peer-deps
 npm test
 npm run build
+npm pack --dry-run
 ```
 
-O comando de build gera `dist/index.js`.
+The production entry point is `dist/index.js`. Angular and Tabby dependencies are external to the generated bundle, loaded by the host Tabby application.
 
-### Instalação manual da preview 0.1.1 no Windows
+The repository includes CI for unit tests, compilation and packaging. Before a public release, verify the packaged files, audit dependencies, and test import twice on a disposable Tabby configuration.
 
-1. Baixe o ZIP do artefato [GitHub Actions](../../actions/workflows/test.yml) e extraia o ZIP interno `tabby-profile-share-plugin-0.1.1.zip`.
-2. Feche o Tabby completamente (inclusive ícone na bandeja).
-3. Copie somente a pasta extraída `tabby-profile-share` para `%APPDATA%\\tabby\\plugins\\node_modules\\`.
-4. Confirme que estes caminhos **existem**:
-   - `%APPDATA%\\tabby\\plugins\\node_modules\\tabby-profile-share\\package.json`
-   - `%APPDATA%\\tabby\\plugins\\node_modules\\tabby-profile-share\\dist\\index.js`
-5. Reabra o Tabby. Em **Settings → Plugins → Installed** procure `profile-share`. A aba **Profile Sharing** deve aparecer nas configurações.
+## Contributing and security
 
-**Atenção:** Não coloque o plugin apenas em `%APPDATA%\\tabby\\plugins\\tabby-profile-share`: o Tabby procura pacotes pelo caminho `plugins\\node_modules`. Também evite aninhar duas pastas `tabby-profile-share`.
+- [Contributing guide](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+- [Release/publishing guide](docs/PUBLISHING.md)
 
-O carregador do Tabby requer `author`, `keywords` e um `main` válido no `package.json`. O campo `author` ausente na versão 0.1.0 impedia a descoberta do plugin; corrigido na 0.1.1.
+Avoid committing real SSH exports, company network inventories or credentials in issues, pull requests, tests or screenshots. Report potential vulnerabilities privately using the instructions in `SECURITY.md`.
 
-Se não aparecer, abra o DevTools do Tabby e examine o Console por mensagens `Cannot load package info`, `Could not load profile-share` e `Loading profile-share`. Guarde o log para diagnóstico. A validação real da interface ainda é pendente.
+## License
 
-**Verificações antes de compartilhar pacotes:** examine o JSON gerado em uma base fictícia; confirme que a árvore, usernames e algoritmos necessários estão preservados, que os dados sensíveis estão ausentes, e teste a importação em um perfil separado do Tabby. Dependências e instalação no aplicativo real ainda exigem validação. O plugin propositalmente não exporta referências a chaves privadas nem comandos de proxy; essas configurações deverão ser refeitas localmente.
+[MIT](LICENSE) © 2026 gugahartmann and contributors.
 
-[GitHub Actions](../../actions/workflows/test.yml) executa testes unitários do formato e um build de validação em cada push.
-
-Consulte o [guia de desenvolvimento de plugins do Tabby](https://github.com/Eugeny/tabby/blob/master/HACKING.md).
-
-## Segurança
-
-A implementação usará uma **allowlist explícita** de campos exportáveis. Nunca serializar `config.store` nem defaults herdados sem revisão. Dados de autenticação não devem ser exportados; scripts de acesso e login estão **fora do escopo**, sem opção de habilitá-los.
-
-## Licença
-
-Licença de distribuição ainda não definida. O código não está publicado como pacote npm até que os testes de integração e a licença sejam revisados.
+Tabby is a separate project, developed and licensed independently by its authors. Tabby Profile Share is a community plugin, **not an official Tabby product**.
