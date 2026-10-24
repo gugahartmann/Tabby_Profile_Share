@@ -1,12 +1,20 @@
 {
   "name": "tabby-profile-share",
-  "version": "0.1.3",
-  "description": "Safe SSH profile sharing plugin for official Eugeny Tabby",
+  "version": "0.1.4",
+  "description": "Export, import and share SSH profiles and folder hierarchies in Tabby Terminal without sharing credentials or private keys.",
   "keywords": [
     "tabby-plugin",
     "tabby",
+    "tabby-terminal",
+    "terminal",
     "ssh",
-    "profiles"
+    "ssh-profiles",
+    "ssh-connections",
+    "profile-sharing",
+    "profile-export",
+    "profile-import",
+    "connection-manager",
+    "ssh-profile-manager"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
