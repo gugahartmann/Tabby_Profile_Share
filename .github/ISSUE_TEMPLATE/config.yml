@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "🔒 Security policy / private vulnerability reporting"
+    url: "https://github.com/gugahartmann/Tabby_Profile_Share/blob/main/SECURITY.md"
+    about: "Do not disclose vulnerabilities or secrets in a public issue. Follow the security policy."
+  - name: "📖 Documentation / Documentação"
+    url: "https://github.com/gugahartmann/Tabby_Profile_Share#readme"
+    about: "Read installation and usage instructions (English and Português do Brasil) before opening an issue."
