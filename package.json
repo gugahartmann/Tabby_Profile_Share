@@ -1,6 +1,6 @@
 {
   "name": "tabby-profile-share",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Safe SSH profile sharing plugin for official Eugeny Tabby",
   "keywords": [
     "tabby-plugin",

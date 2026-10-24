@@ -9,7 +9,7 @@
 
 O **Tabby Profile Share** é um plugin **independente, mantido pela comunidade**, compatível com o [Tabby do Eugeny](https://github.com/Eugeny/tabby). Não exige o fork Tabby Performance nem modifica o código original do Tabby.
 
-> **Estado:** Preview 0.1.1. A instalação manual e a exportação foram confirmadas em teste inicial. A compatibilidade entre versões e todos os fluxos de importação ainda precisam de testes adicionais. O pacote ainda não foi publicado no npm.
+> **Estado:** Preview 0.1.2 (ainda não publicada). A instalação manual e a exportação foram confirmadas em teste inicial. A compatibilidade entre versões e todos os fluxos de importação ainda precisam de testes adicionais. O pacote ainda não foi publicado no npm.
 
 ## Funcionalidades
 
