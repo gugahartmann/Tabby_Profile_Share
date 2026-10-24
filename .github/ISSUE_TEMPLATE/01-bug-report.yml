@@ -9,7 +9,7 @@ body:
 
         **Privacy first:** Never upload real SSH profile exports, passwords, private keys, login scripts, corporate IPs/hostnames, or unredacted logs. Use invented hostnames and IPs (for example, `switch.example.invalid` and `192.0.2.10`).
 
-        For a possible vulnerability, **do not open a public issue**. Read the [security policy](../../SECURITY.md) first.
+        For a possible vulnerability, **do not open a public issue**. Read the [security policy](https://github.com/gugahartmann/Tabby_Profile_Share/blob/main/SECURITY.md) first.
   - type: checkboxes
     id: checklist
     attributes:
