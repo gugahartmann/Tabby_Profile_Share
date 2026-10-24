@@ -1,5 +1,7 @@
 # Tabby Profile Share
 
+**Share Tabby SSH profiles, not SSH credentials.**
+
 **Share SSH profiles and their folder hierarchy safely with your team.**
 
 [![CI](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml/badge.svg)](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml)
