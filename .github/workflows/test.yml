@@ -32,6 +32,16 @@ jobs:
         run: |
           npm audit --json > audit-report.json || true
           node -e 'const a=require("./audit-report.json"); console.log("Audit summary:", JSON.stringify(a.metadata?.vulnerabilities||{})); for (const [name, v] of Object.entries(a.vulnerabilities||{})) console.log(JSON.stringify({package:name,severity:v.severity,direct:v.isDirect,fixAvailable:v.fixAvailable,via:v.via.map(x=>typeof x==="string"?x:{name:x.name,title:x.title,range:x.range})}))'
+      - name: Check npm package registry name
+        shell: bash
+        run: |
+          if npm view tabby-profile-share version --json > npm-name-check.txt 2>&1; then
+            echo "Package name already registered; verify ownership before publishing"
+            cat npm-name-check.txt
+          else
+            echo "Package not found as a published npm package (verify registry availability before publishing)"
+            tail -n 4 npm-name-check.txt
+          fi
       - name: Compile TypeScript / Webpack
         run: npm run build
       - name: Package installable artifacts
