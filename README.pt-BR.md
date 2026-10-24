@@ -55,6 +55,12 @@ Acesse [Nova issue](https://github.com/gugahartmann/Tabby_Profile_Share/issues/n
 
 **Nunca anexe exports reais, endereços IP internos, nomes de equipamentos de produção, chaves, senhas ou logs sem anonimização.** Para falhas de segurança, siga [SECURITY.md](SECURITY.md).
 
+## Publicação pelo GitHub Actions (sem Git ou Node.js local)
+
+O mantenedor pode publicar usando somente o navegador: **GitHub → Actions → Stage npm package**. A primeira publicação exige um token npm temporário de **stage only** armazenado no Secret `NPM_STAGE_TOKEN`. As próximas versões usam Trusted Publishing (OIDC) sem token permanente. Cada versão passa por aprovação na interface do npm com 2FA.
+
+Confira o [guia completo de publicação via GitHub Actions](docs/PUBLISHING.md). Nenhuma publicação é disparada automaticamente por commits ou PRs.
+
 ## Desenvolvimento
 
 ```bash

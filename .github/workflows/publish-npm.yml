@@ -1,0 +1,156 @@
+# Intentionally manual. Never publishes directly: every staged version needs a maintainer's 2FA approval on npmjs.com.
+# First run: bootstrap-stage with a short-lived npm granular token in the NPM_STAGE_TOKEN repository secret.
+# Future runs: trusted-stage after configuring this workflow as npm Trusted Publisher.
+name: Stage npm package
+
+on:
+  workflow_dispatch:
+    inputs:
+      method:
+        description: "First release uses bootstrap-stage; later use trusted-stage with npm OIDC"
+        type: choice
+        options:
+          - bootstrap-stage
+          - trusted-stage
+        required: true
+        default: bootstrap-stage
+      confirm_version:
+        description: "Type the exact package/version shown in package.json (e.g. tabby-profile-share@0.1.2)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-stage-publishing
+  cancel-in-progress: false
+
+jobs:
+  stage:
+    name: Verify build and stage release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check authorization, branch and confirmation
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirm_version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
+            echo "::error::Publishing can only run from the main branch."
+            exit 1
+          fi
+          if [[ "$GITHUB_REPOSITORY" != "gugahartmann/Tabby_Profile_Share" ]]; then
+            echo "::error::This publishing workflow must run in the canonical repository."
+            exit 1
+          fi
+          if [[ -z "$CONFIRM_VERSION" ]]; then
+            echo "::error::A version confirmation is required."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
+      - name: Install npm CLI with staged publishing support
+        run: |
+          npm install --global npm@11.21.1
+          npm --version
+
+      - name: Validate package, version and MIT license
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirm_version }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const p = require('./package.json')
+          const wanted = p.name + '@' + p.version
+          if (process.env.CONFIRM_VERSION !== wanted) {
+              throw Error('Confirmation mismatch. Enter exactly: ' + wanted)
+          }
+          if (p.name !== 'tabby-profile-share' || p.private === true ||
+              p.license !== 'MIT' || !p.keywords.includes('tabby-plugin') ||
+              p.main !== 'dist/index.js' || p.publishConfig?.access !== 'public') {
+              throw Error('Package metadata is unsafe for public release')
+          }
+          if (!fs.existsSync('LICENSE')) throw Error('Missing MIT license file')
+          console.log('Verified public plugin:', wanted)
+          NODE
+
+      - name: Install build dependencies
+        run: npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+
+      - name: Run unit tests and production dependency audit
+        run: |
+          npm test
+          npm audit --omit=dev --audit-level=high
+
+      - name: Compile the plugin
+        run: npm run build
+
+      - name: Inspect publish contents
+        run: |
+          npm pack --dry-run --json > publish-preview.json
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const entries = JSON.parse(fs.readFileSync('publish-preview.json', 'utf8'))
+          if (entries.length !== 1) throw Error('Expected exactly one npm package')
+          const files = entries[0].files.map(x => x.path)
+          for (const must of ['package.json', 'LICENSE', 'README.md', 'dist/index.js']) {
+              if (!files.includes(must)) throw Error('Required package file missing: ' + must)
+          }
+          for (const file of files) {
+              if (/\.tabby-profiles\.json$|\.env$|\.pem$|\.key$|private[-_]?key|credential/i.test(file)) {
+                  throw Error('Potentially sensitive file in npm package: ' + file)
+              }
+          }
+          console.log('Reviewed npm archive:', files.join(', '))
+          NODE
+
+      - name: Prevent staging a version already published
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "tabby-profile-share@${VERSION}" version --registry=https://registry.npmjs.org > /dev/null 2>&1; then
+            echo "::error::Version ${VERSION} already exists on npm. Increment the package version before publishing."
+            exit 1
+          fi
+
+      - name: Stage first npm release using repository secret
+        if: ${{ inputs.method == 'bootstrap-stage' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_STAGE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
+            echo "::error::Set repository secret NPM_STAGE_TOKEN using a short-lived npm granular token with Read and write (stage only)."
+            exit 1
+          fi
+          npm stage publish --access public --tag latest
+
+      - name: Stage later releases using npm Trusted Publishing (OIDC)
+        if: ${{ inputs.method == 'trusted-stage' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm stage publish --access public --tag latest
+
+      - name: Next steps
+        if: ${{ success() }}
+        run: |
+          echo "A package was STAGED, not published to the live registry."
+          echo "Open npmjs.com -> Staged Packages, review the package and click Approve (2FA)."
+          echo "After the first approval, configure npm Trusted Publishing for workflow publish-npm.yml."
+          echo "Delete the NPM_STAGE_TOKEN GitHub secret and revoke the npm token after bootstrap."
