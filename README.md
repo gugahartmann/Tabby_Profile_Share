@@ -9,7 +9,7 @@
 
 Tabby Profile Share is an **independent, community-maintained plugin** for [Tabby by Eugeny](https://github.com/Eugeny/tabby). It does **not** modify Tabby, require the Tabby Performance fork, or have any affiliation with or endorsement from the Tabby maintainers.
 
-> **Status:** Preview 0.1.1 — manual installation and SSH export confirmed by an early tester. Wider compatibility, import scenarios and a public npm release are still being prepared. Do not assume all Tabby versions have been tested.
+> **Status:** Preview 0.1.2 (unpublished) — manual installation and SSH export confirmed by an early tester. Wider compatibility, import scenarios and public npm publication remain separate validation steps. Do not assume all Tabby versions have been tested.
 
 ## Features
 
