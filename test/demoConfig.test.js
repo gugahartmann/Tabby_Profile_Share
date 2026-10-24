@@ -1,0 +1,42 @@
+const { test } = require('node:test')
+const assert = require('node:assert/strict')
+const fs = require('node:fs')
+const path = require('node:path')
+
+const fixture = fs.readFileSync(path.join(__dirname, '../examples/demo-profiles.yaml'), 'utf8')
+
+test('demo Tabby YAML uses native groups/profiles, nested IDs and sample hosts only', () => {
+    assert.match(fixture, /^version: 1$/m)
+    assert.match(fixture, /^showProfileTree: true$/m)
+    assert.match(fixture, /^groups:$/m)
+    assert.match(fixture, /^profiles:$/m)
+    const groups = [...fixture.matchAll(/^  - id: (demo-[\w-]+)$/gm)].map(m => m[1])
+    const profiles = [...fixture.matchAll(/^  - id: "(ssh:demo:[\w-]+)"$/gm)].map(m => m[1])
+    assert.equal(groups.length, 10)
+    assert.equal(profiles.length, 16)
+    assert.equal(new Set(groups).size, 10)
+    assert.equal(new Set(profiles).size, 16)
+    const parents = [...fixture.matchAll(/^    parentGroupId: (demo-[\w-]+)$/gm)].map(m => m[1])
+    const memberGroups = [...fixture.matchAll(/^    group: (demo-[\w-]+)$/gm)].map(m => m[1])
+    for (const ref of [...parents, ...memberGroups]) {
+        assert.ok(groups.includes(ref), 'unknown demo group: ' + ref)
+    }
+    assert.equal(memberGroups.length, profiles.length)
+    assert.match(fixture, /^      user: ""$/m)
+    assert.match(fixture, /example\.invalid/)
+    assert.match(fixture, /192\.0\.2\./)
+    assert.match(fixture, /198\.51\.100\./)
+    assert.match(fixture, /203\.0\.113\./)
+    assert.doesNotMatch(fixture, /^\s+(?:password|privateKeys|privateKey|scripts|proxyCommand|forwardedPorts):/m)
+})
+
+test('public npm package describes profile sharing and remains host compatible', () => {
+    const manifest = require('../package.json')
+    assert.equal(manifest.version, '0.1.4')
+    assert.ok(manifest.description.includes('SSH profiles'))
+    assert.ok(manifest.keywords.includes('tabby-plugin'))
+    assert.ok(manifest.keywords.includes('profile-import'))
+    assert.ok(manifest.keywords.includes('profile-export'))
+    assert.deepEqual(manifest.peerDependencies ?? {}, {})
+    assert.deepEqual(manifest.dependencies ?? {}, {})
+})
