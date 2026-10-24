@@ -34,15 +34,17 @@ jobs:
           mkdir -p package-out/tabby-profile-share
           npm pack --pack-destination package-out
           cp -R dist package.json README.md package-out/tabby-profile-share/
-          (cd package-out && zip -q -r tabby-profile-share-plugin-0.1.0.zip tabby-profile-share)
-          test -s package-out/tabby-profile-share-0.1.0.tgz
-          test -s package-out/tabby-profile-share-plugin-0.1.0.zip
+          VERSION=$(node -p "require('./package.json').version")
+          (cd package-out && zip -q -r "tabby-profile-share-plugin-${VERSION}.zip" tabby-profile-share)
+          test -s "package-out/tabby-profile-share-${VERSION}.tgz"
+          test -s "package-out/tabby-profile-share-plugin-${VERSION}.zip"
+          node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author?.name || !p.keywords.includes('tabby-plugin')) process.exit(1)"
       - name: Upload compiled plugin
         uses: actions/upload-artifact@v4
         with:
-          name: Tabby-Profile-Share-0.1.0-preview
+          name: Tabby-Profile-Share-compiled-preview
           path: |
-            package-out/tabby-profile-share-0.1.0.tgz
-            package-out/tabby-profile-share-plugin-0.1.0.zip
+            package-out/*.tgz
+            package-out/*.zip
           if-no-files-found: error
           retention-days: 30
