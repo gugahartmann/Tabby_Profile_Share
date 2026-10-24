@@ -2,7 +2,7 @@
 
 Plugin independente de **exportação e importação segura de profiles SSH** para o [Tabby oficial (Eugeny)](https://github.com/Eugeny/tabby).
 
-> **Estado: planejamento / especificação.** O plugin ainda não está implementado ou pronto para instalação. Este repositório passa a ser a única base de desenvolvimento e documentação do projeto.
+> **Estado: preview 0.1.0 (código implementado; instalação e testes visuais no Tabby oficial pendentes).** Não publicado no npm. O código e a documentação vivem exclusivamente neste repositório.
 
 ## Objetivo
 
@@ -33,18 +33,27 @@ Permitir que equipes compartilhem centenas de conexões organizadas por pastas (
 
 O Tabby Performance pode usar o mesmo plugin **como consumidor**, mas o plugin não dependerá de patches, APIs privadas ou funcionalidades exclusivas desse fork.
 
-A estratégia de versão mínima de Tabby será definida e testada na implementação; nenhuma compatibilidade binária foi certificada até o momento.
+A preview utiliza os tipos do Tabby 1.0.231-nightly.0 (Angular 15). A instalação e a compatibilidade em versões estáveis do Tabby oficial **ainda não foram certificadas**.
 
 ## Especificação técnica
 
 Leia [docs/SPEC.md](docs/SPEC.md) para fluxos, segurança, regras de importação e critérios de aceitação.
 
-## Desenvolvimento (planejado)
+## Desenvolvimento e teste
 
-1. Criar projeto independente TypeScript/Angular com palavra-chave `tabby-plugin` no `package.json`.
-2. Implementar lógica de exportação/importação e sanitização, isolada da interface.
-3. Integrar a UI por meio do `SettingsTabProvider`.
-4. Testar no Tabby oficial e com ~380 profiles; publicar o pacote somente após validação.
+Pré-requisitos: Node.js 22 e npm; a API alvo é o Tabby oficial, não o fork Tabby Performance.
+
+```bash
+npm install --legacy-peer-deps
+npm test
+npm run build
+```
+
+O comando de build gera `dist/index.js`. Para um **teste manual** no Tabby oficial, execute `npm pack` (o pacote contém `dist`) e instale o pacote através do mecanismo de plugins do Tabby, ou configure `TABBY_PLUGINS` apontando para a pasta deste projeto. Nas configurações aparecerá uma aba **Profile Sharing**.
+
+**Verificações antes de compartilhar pacotes:** examine o JSON gerado em uma base fictícia; confirme que a árvore, usernames e algoritmos necessários estão preservados, que os dados sensíveis estão ausentes, e teste a importação em um perfil separado do Tabby. Dependências e instalação no aplicativo real ainda exigem validação. O plugin propositalmente não exporta referências a chaves privadas nem comandos de proxy; essas configurações deverão ser refeitas localmente.
+
+[GitHub Actions](../../actions/workflows/test.yml) executa testes unitários do formato e um build de validação em cada push.
 
 Consulte o [guia de desenvolvimento de plugins do Tabby](https://github.com/Eugeny/tabby/blob/master/HACKING.md).
 
@@ -54,4 +63,4 @@ A implementação usará uma **allowlist explícita** de campos exportáveis. Nu
 
 ## Licença
 
-Ainda não definida. Nenhuma licença é concedida implicitamente por este documento.
+Licença de distribuição ainda não definida. O código não está publicado como pacote npm até que os testes de integração e a licença sejam revisados.
