@@ -1,0 +1,106 @@
+# Temporary, single-version release staging workflow.
+# This action can STAGE version 0.1.5 only. The owner must approve it on npmjs.com with 2FA.
+name: Stage npm README v0.1.5
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/npm-stage-requests/v0.1.5.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-stage-publishing
+  cancel-in-progress: false
+
+jobs:
+  stage:
+    name: Validate and stage npm v0.1.5 (requires npm web approval)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Verify exact authorized version and release marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "gugahartmann/Tabby_Profile_Share"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$(cat .github/npm-stage-requests/v0.1.5.txt)" = "tabby-profile-share@0.1.5"
+          node <<'NODE'
+          const fs = require('node:fs')
+          const p = require('./package.json')
+          if (p.name !== 'tabby-profile-share' || p.version !== '0.1.5' ||
+              p.private === true || p.license !== 'MIT' ||
+              p.publishConfig?.access !== 'public' ||
+              !p.keywords.includes('tabby-plugin') ||
+              Object.keys(p.peerDependencies ?? {}).length) {
+              throw Error('Refusing to stage unexpected or incompatible package')
+          }
+          const imagePrefix = 'https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/'
+          for (const doc of ['README.md', 'README.pt-BR.md']) {
+              const content = fs.readFileSync(doc, 'utf8')
+              for (const image of ['export-overview.png', 'import-overview.png', 'import-username-prompt.png', 'exported-json-example.png']) {
+                  if (!content.includes(imagePrefix + image)) throw Error('Missing screenshot URL ' + doc + ' / ' + image)
+              }
+          }
+          console.log('Verified npm README 0.1.5 and four public screenshots')
+          NODE
+      - name: Install test and packaging tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global npm@11.21.1
+          npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - name: Test, audit and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test
+          npm audit --omit=dev --audit-level=high
+          npm run build
+      - name: Review package contents and prevent duplicate version
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json > /tmp/npm-readme-0.1.5-preview.json
+          node <<'NODE'
+          const fs = require('node:fs')
+          const entries = JSON.parse(fs.readFileSync('/tmp/npm-readme-0.1.5-preview.json','utf8'))
+          if (entries.length !== 1) throw Error('Expected one package')
+          const names = entries[0].files.map(x=>x.path)
+          for (const name of ['package.json','LICENSE','README.md','README.pt-BR.md','dist/index.js']) {
+              if (!names.includes(name)) throw Error('Missing npm package file: ' + name)
+          }
+          if (names.some(name => /\.env$|\.pem$|\.key$|private[-_]?key|credential|\.tabby-profiles\.json$/i.test(name))) throw Error('Sensitive file pattern detected')
+          console.log('npm pack contents validated:', names.join(', '))
+          NODE
+          if npm view tabby-profile-share@0.1.5 version --json --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "::error::npm v0.1.5 already published. Refusing duplicate stage."
+            exit 1
+          fi
+      - name: Stage v0.1.5 using existing stage-only npm repository secret
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_STAGE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
+            echo "::error::NPM_STAGE_TOKEN is not configured. Use the manual Stage npm package workflow with OIDC if Trusted Publishing is configured."
+            exit 1
+          fi
+          npm stage publish --access public --tag latest
+      - name: Approval instructions
+        run: |
+          echo "STAGED: tabby-profile-share@0.1.5"
+          echo "No live npm publish has occurred yet. Open npmjs.com -> Staged Packages -> tabby-profile-share@0.1.5 -> Approve with 2FA."
+          echo "After approval, consider revoking NPM_STAGE_TOKEN and using npm Trusted Publishing."
