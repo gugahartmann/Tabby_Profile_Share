@@ -9,7 +9,7 @@
 
 O **Tabby Profile Share** é um plugin **independente, mantido pela comunidade**, compatível com o [Tabby do Eugeny](https://github.com/Eugeny/tabby). Não exige o fork Tabby Performance nem modifica o código original do Tabby.
 
-> **Estado:** Preview 0.1.2 (ainda não publicada). A instalação manual e a exportação foram confirmadas em teste inicial. A compatibilidade entre versões e todos os fluxos de importação ainda precisam de testes adicionais. O pacote ainda não foi publicado no npm.
+> **Estado:** Preview 0.1.3 (ainda não publicada). A instalação manual e a exportação foram confirmadas em teste inicial. A compatibilidade entre versões e todos os fluxos de importação ainda precisam de testes adicionais. O pacote ainda não foi publicado no npm.
 
 ## Funcionalidades
 
@@ -22,6 +22,10 @@ O **Tabby Profile Share** é um plugin **independente, mantido pela comunidade**
 - Preservar relações de jump host quando os dois perfis estiverem incluídos no mesmo pacote.
 
 **Atenção à privacidade:** O JSON não contém credenciais armazenadas, mas **contém inventário de rede** (nomes, hosts, IPs internos e usuários expressamente selecionados). Compartilhe somente com destinatários autorizados e revise o arquivo antes de enviá-lo.
+
+## Compatibilidade da instalação
+
+A versão 0.1.3 remove as restrições de `peerDependencies` de execução para Angular e APIs do Tabby. Isso evita o erro `ERESOLVE` causado por plugins legados como `tabby-save-output@3.1.0` (Angular 4), pois o Tabby já oferece Angular e seus módulos internamente. As dependências de desenvolvimento continuam presentes para compilar e testar o código. Nenhuma configuração ou credencial SSH é alterada.
 
 ## Instalação
 
