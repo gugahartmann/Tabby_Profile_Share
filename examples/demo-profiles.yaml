@@ -1,0 +1,195 @@
+# Tabby Profile Share — screenshot-only sample configuration.
+# Based on Tabby's real config.yaml keys: version, showProfileTree, groups and profiles.
+# All addresses are reserved for documentation or under the non-resolving .invalid TLD.
+# NEVER use this file to replace a production config.yaml: copy a backup first,
+# then merge ONLY groups/profiles into a disposable Tabby instance.
+# No passwords, private keys, private key paths, scripts or real infrastructure.
+version: 1
+showProfileTree: true
+
+groups:
+  - id: demo-lab
+    name: "00 · Demo Network"
+    icon: "fas fa-network-wired"
+  - id: demo-north
+    name: "North Region"
+    parentGroupId: demo-lab
+    icon: "fas fa-map-marker-alt"
+  - id: demo-north-core
+    name: "Backbone & Core"
+    parentGroupId: demo-north
+    icon: "fas fa-route"
+  - id: demo-north-access
+    name: "Access & OLT"
+    parentGroupId: demo-north
+    icon: "fas fa-sitemap"
+  - id: demo-south
+    name: "South Region"
+    parentGroupId: demo-lab
+    icon: "fas fa-map-marker-alt"
+  - id: demo-south-core
+    name: "Backbone & Core"
+    parentGroupId: demo-south
+    icon: "fas fa-route"
+  - id: demo-south-access
+    name: "Access & OLT"
+    parentGroupId: demo-south
+    icon: "fas fa-sitemap"
+  - id: demo-dc
+    name: "Demo Data Centers"
+    parentGroupId: demo-lab
+    icon: "fas fa-server"
+  - id: demo-dc-edge
+    name: "Edge & Routing"
+    parentGroupId: demo-dc
+    icon: "fas fa-random"
+  - id: demo-dc-services
+    name: "Services & Linux"
+    parentGroupId: demo-dc
+    icon: "fas fa-cogs"
+
+profiles:
+  - id: "ssh:demo:north-core-01"
+    type: ssh
+    name: "CORE-NORTH-01 · Edge Router"
+    group: demo-north-core
+    icon: "fas fa-network-wired"
+    options:
+      host: "core-north-01.example.invalid"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:north-core-02"
+    type: ssh
+    name: "CORE-NORTH-02 · Core Router"
+    group: demo-north-core
+    icon: "fas fa-network-wired"
+    options:
+      host: "192.0.2.11"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:north-bng-01"
+    type: ssh
+    name: "BNG-NORTH-01 · Subscriber Edge"
+    group: demo-north-core
+    icon: "fas fa-server"
+    options:
+      host: "192.0.2.12"
+      port: 22
+      user: "noc-demo"
+  - id: "ssh:demo:north-olt-01"
+    type: ssh
+    name: "OLT-NORTH-01 · GPON"
+    group: demo-north-access
+    icon: "fas fa-sitemap"
+    options:
+      host: "olt-north-01.example.invalid"
+      port: 22
+      user: "noc-demo"
+  - id: "ssh:demo:north-olt-02"
+    type: ssh
+    name: "OLT-NORTH-02 · GPON"
+    group: demo-north-access
+    icon: "fas fa-sitemap"
+    options:
+      host: "192.0.2.22"
+      port: 22
+      user: ""
+  - id: "ssh:demo:north-sw-01"
+    type: ssh
+    name: "SW-NORTH-01 · Aggregation"
+    group: demo-north-access
+    icon: "fas fa-ethernet"
+    options:
+      host: "192.0.2.23"
+      port: 22
+      user: "readonly"
+  - id: "ssh:demo:south-core-01"
+    type: ssh
+    name: "CORE-SOUTH-01 · Edge Router"
+    group: demo-south-core
+    icon: "fas fa-network-wired"
+    options:
+      host: "core-south-01.example.invalid"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:south-core-02"
+    type: ssh
+    name: "CORE-SOUTH-02 · Core Router"
+    group: demo-south-core
+    icon: "fas fa-network-wired"
+    options:
+      host: "198.51.100.11"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:south-olt-01"
+    type: ssh
+    name: "OLT-SOUTH-01 · GPON"
+    group: demo-south-access
+    icon: "fas fa-sitemap"
+    options:
+      host: "198.51.100.21"
+      port: 22
+      user: "noc-demo"
+  - id: "ssh:demo:south-sw-01"
+    type: ssh
+    name: "SW-SOUTH-01 · Aggregation"
+    group: demo-south-access
+    icon: "fas fa-ethernet"
+    options:
+      host: "sw-south-01.example.invalid"
+      port: 22
+      user: ""
+  - id: "ssh:demo:dc-edge-01"
+    type: ssh
+    name: "EDGE-DC-01 · Border Router"
+    group: demo-dc-edge
+    icon: "fas fa-network-wired"
+    options:
+      host: "203.0.113.11"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:dc-edge-02"
+    type: ssh
+    name: "EDGE-DC-02 · Border Router"
+    group: demo-dc-edge
+    icon: "fas fa-network-wired"
+    options:
+      host: "203.0.113.12"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:dc-fw-01"
+    type: ssh
+    name: "FW-DC-01 · Firewall"
+    group: demo-dc-edge
+    icon: "fas fa-shield-alt"
+    options:
+      host: "firewall-dc-01.example.invalid"
+      port: 22
+      user: "readonly"
+  - id: "ssh:demo:dc-bastion"
+    type: ssh
+    name: "BASTION-DC-01 · Demo Jump Host"
+    group: demo-dc-services
+    icon: "fas fa-door-open"
+    options:
+      host: "203.0.113.21"
+      port: 22
+      user: "netops"
+  - id: "ssh:demo:dc-monitor"
+    type: ssh
+    name: "MONITOR-DC-01 · Linux"
+    group: demo-dc-services
+    icon: "fas fa-desktop"
+    options:
+      host: "monitor-dc-01.example.invalid"
+      port: 2222
+      user: "readonly"
+  - id: "ssh:demo:dc-test"
+    type: ssh
+    name: "LAB-DC-01 · Test VM"
+    group: demo-dc-services
+    icon: "fas fa-desktop"
+    options:
+      host: "203.0.113.23"
+      port: 22
+      user: ""
