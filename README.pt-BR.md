@@ -77,12 +77,6 @@ O arquivo inclui `groups` e `profiles` com versão de formato e opções SSH san
 
 ![Exemplo de JSON exportado com estrutura de grupos e perfis SSH fictícios](docs/screenshots/exported-json-example.png)
 
-## Capturas de tela com perfis demonstrativos
-
-Para capturar a interface sem expor equipamentos da rede real, utilize o [**arquivo YAML de demonstração**](examples/demo-profiles.yaml), com **16 conexões SSH fictícias** agrupadas por regiões, backbone, acesso e data centers. Os hosts usam endereços de documentação ou domínios `.invalid`, sem credenciais.
-
-Siga o [guia de screenshots](docs/SCREENSHOTS.md) para preparar uma instância de teste e fotografar a seleção de pastas, autorização de usernames e prévia de importação. **Não substitua seu `config.yaml` real.** As capturas serão incorporadas ao README depois de registradas e revisadas.
-
 ## Como utilizar
 
 **Exportação:** marque as pastas e equipamentos que deseja compartilhar, selecione apenas os usuários SSH de equipe que devem acompanhar o arquivo e clique em **Export**.
