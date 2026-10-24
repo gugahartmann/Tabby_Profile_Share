@@ -24,6 +24,7 @@ jobs:
           const endpoints = [
             ['npm install registry', 'https://registry.npmjs.org/tabby-profile-share/latest'],
             ['npm version 0.1.3', 'https://registry.npmjs.org/tabby-profile-share/0.1.3'],
+            ['npm version 0.1.4', 'https://registry.npmjs.org/tabby-profile-share/0.1.4'],
             ['Tabby search (profile-share)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20profile-share&size=250'],
             ['Tabby search (tabby-profile-share)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20tabby-profile-share&size=250'],
             ['Tabby search (gugahartmann)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20gugahartmann&size=250'],
@@ -35,7 +36,7 @@ jobs:
                 const res = await fetch(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(20000) })
                 const data = await res.json()
                 const list = Array.isArray(data.objects) ? data.objects.filter(x => x.package?.name === pkg) : []
-                const details = name === 'npm install registry' || name === 'npm version 0.1.3'
+                const details = name === 'npm install registry' || name === 'npm version 0.1.3' || name === 'npm version 0.1.4'
                   ? { version: data.version ?? null, keywords: data.keywords ?? null, name: data.name ?? null }
                   : { totalResults: data.total ?? 0, foundExactPackage: list.length > 0, matchedVersion: list[0]?.package?.version ?? null, resultRank: (data.objects || []).findIndex(x => x.package?.name === pkg) + 1, firstResults: (data.objects || []).slice(0,12).map(x => ({name:x.package?.name, score:x.searchScore})) }
                 console.log(JSON.stringify({ check: name, httpStatus: res.status, ...details }))
