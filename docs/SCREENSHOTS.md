@@ -33,7 +33,20 @@ Suggested framing: use consistent window dimensions, crop excess desktop, hide p
 
 **Do not publish a screenshot until you have checked every visible hostname, username, IP, window title and terminal.** Use fictional sample data only. Avoid showing actual SSH sessions.
 
-Once reviewed, add the PNGs under `docs/screenshots/` and reference them from the root README (English and PT-BR). Image files must be real captures; this repository does not include fabricated product screenshots.
+## Approved screenshot set (2026-10-24)
+
+The four screenshots were captured with **fictional** network profiles and reviewed for obvious sensitive information. The same images are referenced by the English and Portuguese READMEs. The original image files are distributed for maintainers as `tabby-profile-share-screenshots.zip`, with these exact filenames:
+
+- `docs/screenshots/export-overview.png`: folder/device selection and SSH username opt-in
+- `docs/screenshots/import-overview.png`: JSON import preview with four example profiles
+- `docs/screenshots/import-username-prompt.png`: optional username entry for two demo devices
+- `docs/screenshots/exported-json-example.png`: generated JSON structure and safe fields
+
+All user-uploaded samples use documentation-only hostnames and/or reserved documentation IP address blocks. The files are authentic screenshots, not mockups.
+
+If GitHub image upload is required, **extract the ZIP first** and upload the four PNGs together into `docs/screenshots/` on the `docs/add-product-screenshots` branch. Preserve the exact names. Do not upload an actual Tabby configuration or any other real-world host inventory.
+
+**Maintainers:** keep the screenshot changes in a PR until all four binary PNGs are in Git. Merge only after the README image links resolve. After merging, the release notes update workflow updates the existing v0.1.4 GitHub Release description without republishing any npm package.
 
 ## PT-BR — observações importantes
 

@@ -1,0 +1,77 @@
+# One-off upload completion workflow for the four screenshots approved in PR #8.
+# Never runs on main; only after the maintainer uploads PNG files to this branch.
+name: Complete screenshot PR and release notes
+
+on:
+  push:
+    branches:
+      - docs/add-product-screenshots
+    paths:
+      - 'docs/screenshots/*.png'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: screenshots-v0.1.4
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    name: Verify screenshots, merge PR and sync v0.1.4 notes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Verify exact screenshot set and project files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'gugahartmann/Tabby_Profile_Share'
+          test "$GITHUB_REF" = 'refs/heads/docs/add-product-screenshots'
+          test -f docs/RELEASE_NOTES_v0.1.4.md
+          for screenshot in \
+            export-overview.png \
+            import-overview.png \
+            import-username-prompt.png \
+            exported-json-example.png
+          do
+            path="docs/screenshots/$screenshot"
+            test -s "$path" || { echo "::error::Missing expected screenshot: $path"; exit 1; }
+            file "$path" | grep -q 'PNG image data' || { echo "::error::Not a PNG image: $path"; exit 1; }
+            grep -Fq "docs/screenshots/$screenshot" README.md
+            grep -Fq "docs/screenshots/$screenshot" README.pt-BR.md
+          done
+          test -n "$(find docs/screenshots -name '*.png')"
+          echo 'Four authentic PNG images detected and both READMEs link to them.'
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Regression tests
+        run: npm test
+      - name: Merge previously reviewed screenshot PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr view 8 --repo "$GITHUB_REPOSITORY" --json headRefName,baseRefName,state \
+            --jq '.headRefName + " " + .baseRefName + " " + .state' \
+            | grep -Fx 'docs/add-product-screenshots main OPEN'
+          gh pr ready 8 --repo "$GITHUB_REPOSITORY"
+          gh pr merge 8 --repo "$GITHUB_REPOSITORY" --merge
+          echo 'PR #8 merged with the four PNG files.'
+      - name: Update already published v0.1.4 release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view v0.1.4 --repo "$GITHUB_REPOSITORY" >/dev/null
+          gh release edit v0.1.4 \
+            --repo "$GITHUB_REPOSITORY" \
+            --notes-file docs/RELEASE_NOTES_v0.1.4.md
+          echo 'GitHub release v0.1.4 now includes authentic screenshot gallery.'
