@@ -1,0 +1,44 @@
+name: Check npm discovery
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/check-npm-discovery.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - name: Compare npm package registry and Tabby plugin search
+        shell: bash
+        run: |
+          node <<'NODE'
+          const pkg = 'tabby-profile-share'
+          const endpoints = [
+            ['npm install registry', 'https://registry.npmjs.org/tabby-profile-share/latest'],
+            ['Tabby search (profile-share)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20profile-share&size=250'],
+            ['Tabby search (tabby-profile-share)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20tabby-profile-share&size=250'],
+            ['npm exact search', 'https://registry.npmjs.org/-/v1/search?text=tabby-profile-share&size=50'],
+          ]
+          async function run () {
+            for (const [name, url] of endpoints) {
+              try {
+                const res = await fetch(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(20000) })
+                const data = await res.json()
+                const list = Array.isArray(data.objects) ? data.objects.filter(x => x.package?.name === pkg) : []
+                const details = name === 'npm install registry'
+                  ? { version: data.version ?? null, keywords: data.keywords ?? null, name: data.name ?? null }
+                  : { totalResults: data.total ?? 0, foundExactPackage: list.length > 0, matchedVersion: list[0]?.package?.version ?? null }
+                console.log(JSON.stringify({ check: name, httpStatus: res.status, ...details }))
+              } catch (err) { console.log(JSON.stringify({ check: name, error: String(err) })) }
+            }
+          }
+          run().catch(err => { console.error(err); process.exitCode = 1 })
+          NODE
