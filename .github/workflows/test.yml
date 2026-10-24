@@ -25,6 +25,8 @@ jobs:
           node-version: '22'
       - name: Install build dependencies
         run: npm install --legacy-peer-deps
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=high
       - name: Compile TypeScript / Webpack
         run: npm run build
       - name: Package installable artifacts
@@ -38,6 +40,28 @@ jobs:
           (cd package-out && zip -q -r "tabby-profile-share-plugin-${VERSION}.zip" tabby-profile-share)
           test -s "package-out/tabby-profile-share-${VERSION}.tgz"
           test -s "package-out/tabby-profile-share-plugin-${VERSION}.zip"
+          tar -tzf "package-out/tabby-profile-share-${VERSION}.tgz" | grep -q '^package/LICENSE          node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author?.name || !p.keywords.includes('tabby-plugin')) process.exit(1)"
+      - name: Upload compiled plugin
+        uses: actions/upload-artifact@v6
+        with:
+          name: Tabby-Profile-Share-compiled-preview
+          path: |
+            package-out/*.tgz
+            package-out/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+          tar -tzf "package-out/tabby-profile-share-${VERSION}.tgz" | grep -q '^package/dist/index.js          node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author?.name || !p.keywords.includes('tabby-plugin')) process.exit(1)"
+      - name: Upload compiled plugin
+        uses: actions/upload-artifact@v6
+        with:
+          name: Tabby-Profile-Share-compiled-preview
+          path: |
+            package-out/*.tgz
+            package-out/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
           node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author?.name || !p.keywords.includes('tabby-plugin')) process.exit(1)"
       - name: Upload compiled plugin
         uses: actions/upload-artifact@v6
