@@ -1,0 +1,48 @@
+div.p-3
+    h2 Profile Sharing
+    p.text-muted Export or import SSH profiles safely, with no passwords, login scripts or private keys.
+    .btn-group.mb-3
+        button.btn([class.btn-primary]='tab === "export"', [class.btn-outline-secondary]='tab !== "export"', (click)='tab = "export"') Export
+        button.btn([class.btn-primary]='tab === "import"', [class.btn-outline-secondary]='tab !== "import"', (click)='tab = "import"') Import
+    .alert.alert-danger(*ngIf='error') {{error}}
+    .alert.alert-success(*ngIf='info') {{info}}
+    div(*ngIf='tab === "export"')
+        .d-flex.align-items-center.justify-content-between.mb-2
+            h4 Folders and devices
+            div
+                button.btn.btn-sm.btn-outline-secondary.me-2((click)='selectAll(true)') Select all
+                button.btn.btn-sm.btn-outline-secondary((click)='selectAll(false)') Clear
+        p.text-muted Select the folders and SSH devices to export. Only selected devices are included.
+        .border.rounded.p-2.mb-3(style='max-height: 320px; overflow-y: auto')
+            ng-container(*ngFor='let node of visible()')
+                .d-flex.align-items-center.mb-1([style.paddingLeft.px]='node.level * 20')
+                    button.btn.btn-sm.btn-link.p-0.me-1(*ngIf='node.children.length', (click)='node.expanded = !node.expanded') {{node.expanded ? '▾' : '▸'}}
+                    span.me-2(*ngIf='!node.children.length') 📁
+                    input.form-check-input.me-2(type='checkbox', [checked]='node.selected', [indeterminate]='node.partial', (change)='setNode(node, $any($event.target).checked)')
+                    strong {{node.name}}
+                    small.text-muted.ms-2 ({{node.count}})
+                ng-container(*ngIf='node.expanded')
+                    .d-flex.align-items-center.mb-1(*ngFor='let device of node.profiles', [style.paddingLeft.px]='(node.level + 1) * 20 + 13')
+                        input.form-check-input.me-2(type='checkbox', [checked]='selectedIds.has(device.id)', (change)='setProfile(device, $any($event.target).checked)')
+                        span.me-2 🖥
+                        span {{device.name}}
+                        small.text-muted.ms-2 {{device.options?.host}}
+        h4 SSH usernames
+        p.text-muted Usernames below are grouped and <strong>unchecked by default</strong>. Select only the shared team accounts. Unchecked users are removed from the export.
+        .border.rounded.p-2.mb-3(style='max-height: 240px; overflow-y: auto')
+            .text-muted(*ngIf='!users.length') Select devices to see their SSH usernames.
+            .form-check(*ngFor='let item of users')
+                input.form-check-input(type='checkbox', [checked]='sharedUsers.has(item.user)', (change)='toggleUser(item.user, $any($event.target).checked)')
+                label.form-check-label {{item.user}} — {{item.count}} devices
+        p.small.text-muted Login scripts, stored passwords, private keys, private key paths and proxy commands are never exported.
+        button.btn.btn-primary([disabled]='!chosen.length', (click)='export()') Export {{chosen.length}} SSH profiles
+    div(*ngIf='tab === "import"')
+        h4 Import package
+        p.text-muted Imported entries are always new. Existing folders, profiles and usernames are never overwritten.
+        input.form-control.mb-3(type='file', accept='.json,.tabby-profiles.json,application/json', (change)='onFile($event)')
+        .card.mb-3(*ngIf='imported')
+            .card-body
+                h5 {{importFileName}}
+                p {{importSummary}}
+                p.text-muted.small Profiles without usernames will ask for a single SSH username; you can leave it blank.
+                button.btn.btn-primary([disabled]='busy', (click)='import()') {{busy ? 'Importing...' : 'Import as new profiles'}}
