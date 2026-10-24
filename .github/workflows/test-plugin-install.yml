@@ -1,0 +1,83 @@
+name: Plugin install compatibility
+
+on:
+  push:
+    paths:
+      - 'package.json'
+      - 'src/**'
+      - 'test/**'
+      - '.github/workflows/test-plugin-install.yml'
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'src/**'
+      - 'test/**'
+      - '.github/workflows/test-plugin-install.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tabby-arborist:
+    name: Install alongside legacy Tabby plugin (Arborist)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - name: Build release archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+          npm test
+          npm run build
+          mkdir -p /tmp/tabby-plugin-artifacts
+          npm pack --pack-destination /tmp/tabby-plugin-artifacts
+      - name: Reproduce legacy Angular 4 plugin environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/tabby-legacy-plugins /tmp/tabby-arborist-tools
+          cd /tmp/tabby-legacy-plugins
+          printf '{"name":"tabby-legacy-plugins-test","version":"0.0.0","private":true}\n' > package.json
+          npm install --no-audit --no-fund --ignore-scripts tabby-save-output@3.1.0 @angular/core@4.4.7
+          node -e "const p=require('./node_modules/tabby-save-output/package.json'); if (p.peerDependencies?.['@angular/core'] !== '^4.0.1') throw Error('Legacy peer fixture changed'); console.log('Legacy plugin peer:', p.peerDependencies['@angular/core'])"
+          cd /tmp/tabby-arborist-tools
+          printf '{"name":"tabby-arborist-test","version":"0.0.0","private":true}\n' > package.json
+          npm install --no-audit --no-fund --ignore-scripts @npmcli/arborist@9
+      - name: Install built Profile Share via Tabby's Arborist engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs')
+          const path = require('node:path')
+          const Arborist = require('/tmp/tabby-arborist-tools/node_modules/@npmcli/arborist')
+          const root = '/tmp/tabby-legacy-plugins'
+          const pkg = require('./package.json')
+          const archive = '/tmp/tabby-plugin-artifacts/' + pkg.name + '-' + pkg.version + '.tgz'
+          if (!fs.existsSync(archive)) throw Error('Release tarball missing: ' + archive)
+          new Arborist({ path: root, save: false, audit: false, fund: false })
+            .reify({ add: [archive] })
+            .then(() => {
+              const installed = require(path.join(root,'node_modules','tabby-profile-share','package.json'))
+              const oldPlugin = require(path.join(root,'node_modules','tabby-save-output','package.json'))
+              const installedAngular = require(path.join(root,'node_modules','@angular','core','package.json'))
+              const entry = path.join(root,'node_modules','tabby-profile-share','dist','index.js')
+              if (installed.version !== pkg.version || !fs.existsSync(entry))
+                  throw Error('Plugin missing or wrong version after install')
+              if (oldPlugin.version !== '3.1.0' || installedAngular.version !== '4.4.7')
+                  throw Error('Existing plugin or Angular version changed')
+              if (Object.keys(installed.peerDependencies ?? {}).length)
+                  throw Error('Published tarball still contains incompatible peers')
+              console.log('ARBORIST_INSTALL_SUCCESS:', installed.version)
+              console.log('LEGACY_PLUGIN_PRESERVED:', oldPlugin.version)
+              console.log('LEGACY_ANGULAR_PRESERVED:', installedAngular.version)
+              console.log('PLUGIN_ENTRY_EXISTS:', fs.existsSync(entry))
+            })
+            .catch(error => { console.error('ARBORIST_INSTALL_FAILED:', error.code, error.message); process.exitCode = 1 })
+          NODE
