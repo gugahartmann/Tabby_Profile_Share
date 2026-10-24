@@ -71,6 +71,12 @@ The production entry point is `dist/index.js`. Angular and Tabby dependencies ar
 
 The repository includes CI for unit tests, compilation and packaging. Before a public release, verify the packaged files, audit dependencies, and test import twice on a disposable Tabby configuration.
 
+## Feedback and issue reports
+
+Open an issue using one of the [three guided templates](https://github.com/gugahartmann/Tabby_Profile_Share/issues/new/choose): **Bug Report**, **Feature Request**, or **Custom / Question**. The forms follow the concise reporting style seen in the [Tabby Better Sidebar community](https://github.com/TooMuhtsh/tabby-better-sidebar/issues), with extra checks to protect SSH infrastructure data.
+
+Please **never attach real SSH exports, internal hosts/IPs, login scripts, keys, passwords or unredacted logs**. Use synthetic samples. For security vulnerabilities, follow [SECURITY.md](SECURITY.md) rather than opening a public issue.
+
 ## Contributing and security
 
 - [Contributing guide](CONTRIBUTING.md)
