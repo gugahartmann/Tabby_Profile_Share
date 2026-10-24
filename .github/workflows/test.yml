@@ -40,8 +40,9 @@ jobs:
           (cd package-out && zip -q -r "tabby-profile-share-plugin-${VERSION}.zip" tabby-profile-share)
           test -s "package-out/tabby-profile-share-${VERSION}.tgz"
           test -s "package-out/tabby-profile-share-plugin-${VERSION}.zip"
-          tar -tzf "package-out/tabby-profile-share-${VERSION}.tgz" | grep -q "^package/LICENSE$"
-          tar -tzf "package-out/tabby-profile-share-${VERSION}.tgz" | grep -q "^package/dist/index.js$"
+          tar -tzf "package-out/tabby-profile-share-${VERSION}.tgz" > package-out/archive-files.txt
+          grep -q "^package/LICENSE$" package-out/archive-files.txt
+          grep -q "^package/dist/index.js$" package-out/archive-files.txt
           node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author || !p.keywords.includes('tabby-plugin')) process.exit(1)"
       - name: Upload compiled plugin
         uses: actions/upload-artifact@v6
