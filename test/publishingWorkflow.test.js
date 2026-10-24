@@ -1,0 +1,28 @@
+const { test } = require('node:test')
+const assert = require('node:assert/strict')
+const fs = require('node:fs')
+const path = require('node:path')
+
+test('npm release is manual, version-gated and 2FA-approved via staging', () => {
+    const workflow = fs.readFileSync(path.join(__dirname, '../.github/workflows/publish-npm.yml'), 'utf8')
+    assert.match(workflow, /^  workflow_dispatch:$/m)
+    assert.doesNotMatch(workflow, /^  (?:push|schedule|release):$/m)
+    assert.match(workflow, /refs\/heads\/main/)
+    assert.match(workflow, /CONFIRM_VERSION/)
+    assert.match(workflow, /npm stage publish --access public --tag latest/g)
+    assert.doesNotMatch(workflow, /^\s+npm publish\b/m)
+    assert.match(workflow, /secrets\.NPM_STAGE_TOKEN/)
+    assert.match(workflow, /id-token: write/)
+    assert.match(workflow, /npm audit --omit=dev --audit-level=high/)
+    assert.match(workflow, /npm pack --dry-run --json/)
+    assert.match(workflow, /--ignore-scripts/)
+})
+
+test('the package remains public, licensed and discoverable by Tabby', () => {
+    const manifest = require('../package.json')
+    assert.equal(manifest.private, undefined)
+    assert.equal(manifest.license, 'MIT')
+    assert.equal(manifest.publishConfig.access, 'public')
+    assert.equal(manifest.name, 'tabby-profile-share')
+    assert.ok(manifest.keywords.includes('tabby-plugin'))
+})
