@@ -59,25 +59,25 @@ Estas imagens foram capturadas no **Tabby com [perfis SSH demonstrativos e fict�
 
 Escolha quais pastas e equipamentos serão exportados. O compartilhamento de usernames é **opcional e desmarcado por padrão**. Neste exemplo, apenas o usuário `noc-demo` foi selecionado.
 
-![Tela de exportação do Tabby Profile Share com pastas SSH, equipamentos e seleção de usuários compartilhados](docs/screenshots/export-overview.png)
+![Tela de exportação do Tabby Profile Share com pastas SSH, equipamentos e seleção de usuários compartilhados](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/export-overview.png)
 
 ### 2. Prévia dos dados a importar
 
 Carregue um arquivo `.tabby-profiles.json` e confira a quantidade de novas pastas, perfis SSH e equipamentos sem username. Os itens importados são novos e não substituem os já cadastrados.
 
-![Prévia da importação com duas novas pastas, quatro perfis e dois equipamentos sem username](docs/screenshots/import-overview.png)
+![Prévia da importação com duas novas pastas, quatro perfis e dois equipamentos sem username](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/import-overview.png)
 
 ### 3. Preenchimento de usernames ausentes
 
 Quando os perfis importados estão sem usuário SSH, o plugin solicita um username, exibindo exemplos dos equipamentos afetados. É possível continuar sem preencher.
 
-![Solicitação de username SSH para dois equipamentos demonstrativos durante a importação](docs/screenshots/import-username-prompt.png)
+![Solicitação de username SSH para dois equipamentos demonstrativos durante a importação](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/import-username-prompt.png)
 
 ### 4. Estrutura do JSON exportado
 
 O arquivo inclui `groups` e `profiles` com versão de formato e opções SSH sanitizadas. Senhas, chaves privadas e scripts de login ficam de fora.
 
-![Exemplo de JSON exportado com estrutura de grupos e perfis SSH fictícios](docs/screenshots/exported-json-example.png)
+![Exemplo de JSON exportado com estrutura de grupos e perfis SSH fictícios](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/exported-json-example.png)
 
 ## Como utilizar
 

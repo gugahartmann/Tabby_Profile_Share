@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.5 — npm README and screenshot updates (2026-10-24)
+
+- Republish the current English and Brazilian Portuguese documentation, including the project tagline and four authentic screenshots captured with fictional SSH profiles.
+- Use absolute raw GitHub URLs for screenshot assets so the npm package page can render images even though image binaries are not bundled in the npm tarball.
+- Keep the prior v0.1.4 plugin functionality, compatibility, and dependencies unchanged.
+
 ## 0.1.4 — Documentation, discovery and GitHub release (2026-10-24)
 
 - Improve npm package description and focused discovery keywords for SSH profile export/import.

@@ -32,7 +32,7 @@ test('demo Tabby YAML uses native groups/profiles, nested IDs and sample hosts o
 
 test('public npm package describes profile sharing and remains host compatible', () => {
     const manifest = require('../package.json')
-    assert.equal(manifest.version, '0.1.4')
+    assert.equal(manifest.version, '0.1.5')
     assert.ok(manifest.description.includes('SSH profiles'))
     assert.ok(manifest.keywords.includes('tabby-plugin'))
     assert.ok(manifest.keywords.includes('profile-import'))
