@@ -49,6 +49,34 @@ Também oferecemos arquivos compilados em [Releases](https://github.com/gugahart
 
 Evite colocar a pasta diretamente em `plugins` ou aninhar duas pastas `tabby-profile-share`.
 
+## Capturas de tela
+
+Estas imagens foram capturadas no **Tabby com [perfis SSH demonstrativos e fictícios](examples/demo-profiles.yaml)**, sem infraestrutura real, senhas ou chaves privadas.
+
+### 1. Seleção de pastas, equipamentos e usuários compartilhados
+
+Escolha quais pastas e equipamentos serão exportados. O compartilhamento de usernames é **opcional e desmarcado por padrão**. Neste exemplo, apenas o usuário `noc-demo` foi selecionado.
+
+![Tela de exportação do Tabby Profile Share com pastas SSH, equipamentos e seleção de usuários compartilhados](docs/screenshots/export-overview.png)
+
+### 2. Prévia dos dados a importar
+
+Carregue um arquivo `.tabby-profiles.json` e confira a quantidade de novas pastas, perfis SSH e equipamentos sem username. Os itens importados são novos e não substituem os já cadastrados.
+
+![Prévia da importação com duas novas pastas, quatro perfis e dois equipamentos sem username](docs/screenshots/import-overview.png)
+
+### 3. Preenchimento de usernames ausentes
+
+Quando os perfis importados estão sem usuário SSH, o plugin solicita um username, exibindo exemplos dos equipamentos afetados. É possível continuar sem preencher.
+
+![Solicitação de username SSH para dois equipamentos demonstrativos durante a importação](docs/screenshots/import-username-prompt.png)
+
+### 4. Estrutura do JSON exportado
+
+O arquivo inclui `groups` e `profiles` com versão de formato e opções SSH sanitizadas. Senhas, chaves privadas e scripts de login ficam de fora.
+
+![Exemplo de JSON exportado com estrutura de grupos e perfis SSH fictícios](docs/screenshots/exported-json-example.png)
+
 ## Capturas de tela com perfis demonstrativos
 
 Para capturar a interface sem expor equipamentos da rede real, utilize o [**arquivo YAML de demonstração**](examples/demo-profiles.yaml), com **16 conexões SSH fictícias** agrupadas por regiões, backbone, acesso e data centers. Os hosts usam endereços de documentação ou domínios `.invalid`, sem credenciais.
