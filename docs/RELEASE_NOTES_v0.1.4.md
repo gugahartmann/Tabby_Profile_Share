@@ -11,6 +11,26 @@
 - Added a [screenshot guide](https://github.com/gugahartmann/Tabby_Profile_Share/blob/main/docs/SCREENSHOTS.md), plus tests guarding sample IDs, privacy and npm compatibility.
 - Maintains the **0.1.3 fix** for plugin installation alongside legacy Angular 4 peer dependencies.
 
+## Product screenshots
+
+Actual captures from official Tabby using **synthetic SSH hosts and user accounts**:
+
+### Export profiles and opt in to SSH usernames
+
+![Profile Share export screen, nested groups and optional username sharing](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/export-overview.png)
+
+### Import preview
+
+![Review folders, profiles and usernames before importing](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/import-overview.png)
+
+### Username prompt for imported profiles
+
+![Prompt for profiles missing an SSH username](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/import-username-prompt.png)
+
+### Portable, versioned JSON export
+
+![Sanitized groups and profiles in the generated JSON](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/exported-json-example.png)
+
 ## Downloads
 
 - **`tabby-profile-share-plugin-0.1.4.zip`** — manually installable plugin bundle for Tabby.
