@@ -80,12 +80,6 @@ The export contains versioned `groups` and `profiles` data, with sanitized conne
 
 ![Sample Tabby Profile Share JSON export showing folder and SSH profile structure with fictional hosts](docs/screenshots/exported-json-example.png)
 
-## Screenshots and demo profiles
-
-For screenshots, use the [**synthetic Tabby YAML configuration**](examples/demo-profiles.yaml) containing **16 example SSH profiles across nested regions, core/access networks and data centers**. All hosts use the reserved documentation IPv4 ranges or `.invalid` domains; there are **no real devices or credentials**.
-
-See the [screenshot guide](docs/SCREENSHOTS.md) to set up an isolated instance and capture the folder selector, username opt-in and import preview. **Do not replace your real `config.yaml` or upload an unredacted screenshot of production profiles.** Screenshots will be embedded in this README once captured and reviewed.
-
 ## Use
 
 **Export:** Select the folder tree, review the list of usernames (unchecked by default), explicitly enable only shared/team usernames, then click **Export**. Inspect the resulting JSON before distributing it.
