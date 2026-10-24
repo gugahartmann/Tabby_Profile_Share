@@ -1,7 +1,6 @@
 {
   "name": "tabby-profile-share",
   "version": "0.1.1",
-  "private": true,
   "description": "Safe SSH profile sharing plugin for official Eugeny Tabby",
   "keywords": [
     "tabby-plugin",
@@ -15,11 +14,15 @@
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "test": "node --test test/*.test.js",
-    "check": "npm run test && npm run build"
+    "check": "npm run test && npm run build",
+    "prepublishOnly": "npm run check"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "README.pt-BR.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "peerDependencies": {
     "@angular/core": "^15.0.0",
@@ -45,12 +48,17 @@
     "tabby-core": "^1.0.231-nightly.0",
     "tabby-settings": "^1.0.231-nightly.0"
   },
-  "author": {
-    "name": "Tabby Profile Share Contributors"
-  },
+  "author": "gugahartmann",
   "repository": {
     "type": "git",
     "url": "https://github.com/gugahartmann/Tabby_Profile_Share.git"
   },
-  "homepage": "https://github.com/gugahartmann/Tabby_Profile_Share#readme"
+  "homepage": "https://github.com/gugahartmann/Tabby_Profile_Share#readme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gugahartmann/Tabby_Profile_Share/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
