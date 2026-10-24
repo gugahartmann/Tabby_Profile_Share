@@ -1,0 +1,105 @@
+name: "🐛 Bug Report"
+description: "Report a reproducible problem with Tabby Profile Share."
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting an issue! Please provide a minimal, reproducible example, as in the Tabby Better Sidebar community.
+
+        **Privacy first:** Never upload real SSH profile exports, passwords, private keys, login scripts, corporate IPs/hostnames, or unredacted logs. Use invented hostnames and IPs (for example, `switch.example.invalid` and `192.0.2.10`).
+
+        For a possible vulnerability, **do not open a public issue**. Read the [security policy](https://github.com/gugahartmann/Tabby_Profile_Share/blob/main/SECURITY.md) first.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: "I searched existing issues to avoid reporting a duplicate."
+          required: true
+        - label: "I removed credentials, real device names, internal IPs and other sensitive information from the report."
+          required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: "Find it in Settings → Plugins or in the installed package.json."
+      placeholder: "e.g. 0.1.2"
+    validations:
+      required: true
+  - type: input
+    id: tabby-version
+    attributes:
+      label: Tabby version
+      placeholder: "e.g. 1.0.x (stable or nightly)"
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected area
+      options:
+        - Plugin installation / loading
+        - Export / file generation
+        - Folder tree / selection
+        - Username sharing / redaction
+        - Import / new profiles
+        - Import username prompt
+        - SSH options / algorithms / jump hosts
+        - Performance / large profile lists
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: "Describe the problem and any visible error message."
+      placeholder: "The plugin displayed ... when I ..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: "Use only synthetic profiles and data."
+      placeholder: |
+        1. Create a test group with two fake SSH profiles.
+        2. Open Settings → Profile Sharing.
+        3. Select ...
+        4. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: "The plugin should ..."
+    validations:
+      required: true
+  - type: textarea
+    id: sanitized-logs
+    attributes:
+      label: Sanitized logs or screenshots
+      description: "Optional. Redact any usernames, IPs, hostnames, tokens and corporate details before posting."
+      placeholder: "Paste a short, sanitized error or drag a redacted screenshot here."
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: "Optional. For imports, mention whether profiles were already present and whether a backup was made; never attach your original SSH export."
+    validations:
+      required: false

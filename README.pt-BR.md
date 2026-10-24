@@ -49,6 +49,12 @@ Evite colocar a pasta diretamente em `plugins` ou aninhar duas pastas `tabby-pro
 
 **Importação:** faça backup das configurações, carregue o JSON, confira as quantidades e confirme. Novos grupos e perfis serão criados. Para perfis sem username, informe o usuário desejado ou prossiga sem preencher.
 
+## Reportar bugs e sugerir melhorias
+
+Acesse [Nova issue](https://github.com/gugahartmann/Tabby_Profile_Share/issues/new/choose) e escolha **Bug Report**, **Feature Request** ou **Custom / Question**. Os formulários seguem a estrutura objetiva das sugestões da comunidade [Tabby Better Sidebar](https://github.com/TooMuhtsh/tabby-better-sidebar/issues), acrescentando verificações de privacidade específicas para perfis SSH.
+
+**Nunca anexe exports reais, endereços IP internos, nomes de equipamentos de produção, chaves, senhas ou logs sem anonimização.** Para falhas de segurança, siga [SECURITY.md](SECURITY.md).
+
 ## Desenvolvimento
 
 ```bash

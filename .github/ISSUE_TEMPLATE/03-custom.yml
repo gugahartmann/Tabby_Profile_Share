@@ -1,0 +1,54 @@
+name: "💬 Custom / Question"
+description: "Ask a question or raise another topic that is not a bug or feature request."
+title: "[Custom]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for usage questions, documentation suggestions, compatibility discussions or other community topics.
+
+        If you found a reproducible defect, please choose **Bug Report** instead. To request functionality, choose **Feature Request**.
+
+        **Do not disclose vulnerabilities or secrets here.** Follow our [security policy](https://github.com/gugahartmann/Tabby_Profile_Share/blob/main/SECURITY.md) for private reporting.
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - How to use the plugin
+        - Installation / compatibility question
+        - Documentation / translation
+        - Development / contribution
+        - General discussion
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Question or description
+      description: "Describe what you need and what you have already tried."
+      placeholder: "I would like to know ..."
+    validations:
+      required: true
+  - type: input
+    id: context
+    attributes:
+      label: Plugin and Tabby versions (if relevant)
+      placeholder: "e.g. Profile Share 0.1.2 / Tabby 1.0.x / Windows"
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: Additional references
+      description: "Optional links or sanitized screenshots. Never attach real SSH profile files or sensitive logs."
+    validations:
+      required: false
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: "My post does not contain credentials, production infrastructure details or real SSH exports."
+          required: true

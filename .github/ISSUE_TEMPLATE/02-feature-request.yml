@@ -1,0 +1,72 @@
+name: "✨ Feature Request"
+description: "Suggest a new capability or workflow improvement for the plugin."
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature suggestions are welcome! Inspired by the concise **feature request → desired behavior** structure used in the Tabby Better Sidebar community.
+
+        Tabby Profile Share focuses on **safe, independent, on-demand SSH profile sharing**. Do not include real company inventories, passwords or credentials in examples.
+  - type: checkboxes
+    id: check-existing
+    attributes:
+      label: Before submitting
+      options:
+        - label: "I searched existing issues and feature requests."
+          required: true
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Feature area
+      options:
+        - Export / profile selection
+        - Folder hierarchy / tree view
+        - SSH usernames / shared accounts
+        - Import / conflict handling
+        - SSH configuration compatibility
+        - Usability / accessibility / localization
+        - Security / privacy
+        - Performance
+        - Plugin distribution / updates
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: "Explain the use case and why the current behavior is insufficient."
+      placeholder: "When sharing profiles with teammates, I need ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Proposed solution / desired behavior
+      description: "What should users be able to do? Include a short example using fictional profiles."
+      placeholder: |
+        Add an option that ...
+        Example: Group A → Site B → test-switch.example.invalid
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: "Optional. Mention existing Tabby behavior, plugins, or workarounds."
+    validations:
+      required: false
+  - type: textarea
+    id: impact
+    attributes:
+      label: Additional context or mockups
+      description: "Optional. Include sanitized mockups, expected compatibility, and performance considerations."
+    validations:
+      required: false
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security and compatibility
+      options:
+        - label: "This feature should preserve the plugin's default protection against sharing passwords, private keys and login scripts."
