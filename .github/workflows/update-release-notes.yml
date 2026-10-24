@@ -1,0 +1,48 @@
+name: Update GitHub Release screenshots
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/screenshots/**'
+      - 'docs/RELEASE_NOTES_v0.1.4.md'
+      - '.github/workflows/update-release-notes.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-release-notes:
+    name: Sync v0.1.4 release description with screenshots
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Require all original screenshot images
+        shell: bash
+        run: |
+          set -euo pipefail
+          for image in \
+            docs/screenshots/export-overview.png \
+            docs/screenshots/import-overview.png \
+            docs/screenshots/import-username-prompt.png \
+            docs/screenshots/exported-json-example.png
+          do
+            test -s "$image" || { echo "::error::Missing screenshot: $image"; exit 1; }
+            file "$image" | grep -q 'PNG image data' || { echo "::error::Invalid PNG: $image"; exit 1; }
+          done
+          echo "All four authentic product screenshots are available."
+      - name: Update existing public GitHub release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view v0.1.4 --repo "$GITHUB_REPOSITORY" >/dev/null
+          gh release edit v0.1.4 \
+            --repo "$GITHUB_REPOSITORY" \
+            --notes-file docs/RELEASE_NOTES_v0.1.4.md
+          gh release view v0.1.4 \
+            --repo "$GITHUB_REPOSITORY" \
+            --json url,isDraft,isPrerelease,assets
