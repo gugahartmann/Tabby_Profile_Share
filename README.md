@@ -62,25 +62,25 @@ These screenshots were taken from **Tabby using [synthetic demo SSH profiles](ex
 
 Choose only the folders and devices to export. Username sharing is **opt-in**: accounts are unchecked by default, and in this example only `noc-demo` is selected.
 
-![Tabby Profile Share export screen with nested SSH folders, selected profiles, and SSH username opt-in checkboxes](docs/screenshots/export-overview.png)
+![Tabby Profile Share export screen with nested SSH folders, selected profiles, and SSH username opt-in checkboxes](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/export-overview.png)
 
 ### 2. Review the import before creating profiles
 
 Import a `.tabby-profiles.json` package and review the number of new folders, new SSH profiles and missing usernames. Imported entries are created as new items; existing entries are not overwritten.
 
-![Tabby Profile Share import preview showing two new folders, four new profiles and two profiles without usernames](docs/screenshots/import-overview.png)
+![Tabby Profile Share import preview showing two new folders, four new profiles and two profiles without usernames](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/import-overview.png)
 
 ### 3. Supply missing SSH usernames
 
 When imported profiles lack usernames, Tabby Profile Share asks for a shared SSH username and shows example devices. The field can be left empty.
 
-![SSH username prompt showing two fictional devices requiring a username during import](docs/screenshots/import-username-prompt.png)
+![SSH username prompt showing two fictional devices requiring a username during import](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/import-username-prompt.png)
 
 ### 4. Inspect the portable JSON export
 
 The export contains versioned `groups` and `profiles` data, with sanitized connection options. It intentionally excludes passwords, private key files and login scripts.
 
-![Sample Tabby Profile Share JSON export showing folder and SSH profile structure with fictional hosts](docs/screenshots/exported-json-example.png)
+![Sample Tabby Profile Share JSON export showing folder and SSH profile structure with fictional hosts](https://raw.githubusercontent.com/gugahartmann/Tabby_Profile_Share/main/docs/screenshots/exported-json-example.png)
 
 ## Use
 
