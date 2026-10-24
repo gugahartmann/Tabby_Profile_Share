@@ -29,7 +29,7 @@ Since `tabby-profile-share` is not published yet, a Trusted Publisher relationsh
    - Value: the token copied from npm
 7. Open **GitHub → Actions → Stage npm package → Run workflow**. Select branch **main**:
    - Method: `bootstrap-stage`
-   - Confirm version: `tabby-profile-share@0.1.2` (or the exact current `package.json` version).
+   - Confirm version: `tabby-profile-share@0.1.3` (or the exact current `package.json` version).
 8. Open the workflow log. A successful job means the version is **staged, not yet public**.
 9. On npmjs.com, open **Staged Packages**. Inspect the staged `tabby-profile-share` files. Click **Approve**, then complete npm 2FA. Approval is the actual publication. New packages may have a public `0.0.0-stage` placeholder before approval.
 10. Confirm the package page: https://www.npmjs.com/package/tabby-profile-share and test it from Tabby **Settings → Plugins**.
