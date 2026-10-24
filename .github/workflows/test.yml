@@ -40,7 +40,7 @@ jobs:
           test -s "package-out/tabby-profile-share-plugin-${VERSION}.zip"
           node -e "const p=require('./package-out/tabby-profile-share/package.json'); if (!p.author?.name || !p.keywords.includes('tabby-plugin')) process.exit(1)"
       - name: Upload compiled plugin
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Tabby-Profile-Share-compiled-preview
           path: |
