@@ -43,7 +43,8 @@ export class ProfileShareComponent {
         const byParent = new Map<string, PartialProfileGroup<ProfileGroup>[]>()
         const validIds = new Set(this.groups.map(g => g.id))
         for (const group of this.groups) {
-            const parent = group.parentGroupId && validIds.has(group.parentGroupId) ? group.parentGroupId : ''
+            const parentId: string | undefined = (group as any).parentGroupId
+            const parent = parentId && validIds.has(parentId) ? parentId : ''
             byParent.set(parent, [...(byParent.get(parent) || []), group])
         }
         const create = (parent: string, depth: number, path: Set<string>): Node[] =>
