@@ -32,3 +32,26 @@ jobs:
             npm ls tabby-profile-share @angular/core @angular/common tabby-core tabby-settings --depth=0 || true
           fi
           exit 0
+
+      - name: Simulate Tabby's Arborist installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/arborist-runtime /tmp/tabby-arborist-plugin-root
+          cd /tmp/arborist-runtime
+          printf '{"name":"arborist-diagnostic","private":true,"version":"0.0.0"}\n' > package.json
+          npm install --no-audit --no-fund --ignore-scripts --loglevel error @npmcli/arborist@9
+          node <<'NODE'
+          const path = require('node:path')
+          const Arborist = require('@npmcli/arborist')
+          const root = '/tmp/tabby-arborist-plugin-root'
+          new Arborist({path: root, save: false, audit: false, fund: false})
+            .reify({add: ['tabby-profile-share@0.1.2']})
+            .then(async () => {
+              const fs = require('node:fs')
+              const manifest = JSON.parse(fs.readFileSync(path.join(root, 'node_modules', 'tabby-profile-share', 'package.json'),'utf8'))
+              const exists = fs.existsSync(path.join(root, 'node_modules', 'tabby-profile-share', 'dist','index.js'))
+              console.log('TABBY_ARBORIST_INSTALL_SUCCESS:', manifest.version, 'ENTRY_EXISTS:', exists)
+            })
+            .catch(err => {console.error('TABBY_ARBORIST_ERROR:', err.code, err.message); process.exitCode = 1})
+          NODE
