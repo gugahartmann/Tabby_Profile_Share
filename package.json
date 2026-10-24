@@ -1,6 +1,6 @@
 {
   "name": "tabby-profile-share",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Export, import and share SSH profiles and folder hierarchies in Tabby Terminal without sharing credentials or private keys.",
   "keywords": [
     "tabby-plugin",
