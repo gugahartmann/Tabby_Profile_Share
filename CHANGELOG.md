@@ -5,6 +5,12 @@
 - Open-source release preparation: MIT license, public documentation, security policy and contribution guidelines.
 - npm package metadata and release checklists.
 
+## 0.1.2 — Prepared, not yet published to npm
+
+- Bump version for first public preview.
+- Review Git history and document Angular 15 compatibility/security advisory boundaries.
+- Add complete development audit visibility and npm name lookup to CI.
+
 ## 0.1.1 — Preview (2026-10-24)
 
 - Fixed missing author metadata for Tabby plugin discovery.
