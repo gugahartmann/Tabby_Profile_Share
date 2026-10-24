@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.1.3 — Installation compatibility fix (pending npm publication)
+
+- Fixed `ERESOLVE` on Tabby 1.0.235 when other installed plugins declare incompatible Angular peer dependencies (for example, `tabby-save-output@3.1.0` requires Angular 4).
+- Removed *runtime peerDependencies* for Angular/Tabby host modules. These modules are provided by Tabby's own runtime; Angular 15 and Tabby API packages remain development-only dependencies for compilation.
+- Added a package integration test using Tabby's npm Arborist installer with the legacy plugin already installed. Export/import features are unchanged.
+
+
+
 - Open-source release preparation: MIT license, public documentation, security policy and contribution guidelines.
 - npm package metadata and release checklists.
 

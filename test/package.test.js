@@ -25,3 +25,15 @@ test('public distribution metadata is complete', () => {
     assert.ok(fs.readFileSync(require('node:path').join(__dirname, '../LICENSE'), 'utf8').includes('MIT License'))
     assert.ok(manifest.files.includes('dist'))
 })
+
+test('plugin does not impose runtime peer dependencies on the shared npm plugin directory', () => {
+    // Tabby supplies Angular and Tabby API modules from its own runtime.
+    // Older plugins (e.g. tabby-save-output@3.1.0) can leave Angular 4 in
+    // the npm-managed plugin tree, while Tabby itself uses Angular 15.
+    // npm Arborist must never resolve the host's Angular from this package.
+    assert.deepEqual(manifest.peerDependencies ?? {}, {})
+    assert.deepEqual(manifest.dependencies ?? {}, {})
+    assert.ok(manifest.devDependencies['@angular/core'].startsWith('^15.'))
+    assert.ok(manifest.devDependencies['tabby-core'])
+    assert.ok(manifest.devDependencies['tabby-settings'])
+})
