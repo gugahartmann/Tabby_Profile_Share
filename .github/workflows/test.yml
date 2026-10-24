@@ -27,6 +27,11 @@ jobs:
         run: npm install --legacy-peer-deps
       - name: Audit runtime dependencies
         run: npm audit --omit=dev --audit-level=high
+      - name: Report development dependency advisories
+        shell: bash
+        run: |
+          npm audit --json > audit-report.json || true
+          node -e 'const a=require("./audit-report.json"); console.log("Audit summary:", JSON.stringify(a.metadata?.vulnerabilities||{})); for (const [name, v] of Object.entries(a.vulnerabilities||{})) console.log(JSON.stringify({package:name,severity:v.severity,direct:v.isDirect,fixAvailable:v.fixAvailable,via:v.via.map(x=>typeof x==="string"?x:{name:x.name,title:x.title,range:x.range})}))'
       - name: Compile TypeScript / Webpack
         run: npm run build
       - name: Package installable artifacts
