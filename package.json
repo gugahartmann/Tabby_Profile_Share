@@ -1,6 +1,6 @@
 {
   "name": "tabby-profile-share",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Safe SSH profile sharing plugin for official Eugeny Tabby",
   "keywords": [
@@ -44,5 +44,13 @@
     "webpack-cli": "^5.1.0",
     "tabby-core": "^1.0.231-nightly.0",
     "tabby-settings": "^1.0.231-nightly.0"
-  }
+  },
+  "author": {
+    "name": "Tabby Profile Share Contributors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gugahartmann/Tabby_Profile_Share.git"
+  },
+  "homepage": "https://github.com/gugahartmann/Tabby_Profile_Share#readme"
 }
