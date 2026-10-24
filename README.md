@@ -2,7 +2,7 @@
 
 Plugin independente de **exportação e importação segura de profiles SSH** para o [Tabby oficial (Eugeny)](https://github.com/Eugeny/tabby).
 
-> **Estado: preview 0.1.0 (código implementado; instalação e testes visuais no Tabby oficial pendentes).** Não publicado no npm. O código e a documentação vivem exclusivamente neste repositório.
+> **Estado: preview 0.1.1 (código implementado; instalação e testes visuais no Tabby oficial pendentes).** Não publicado no npm. O código e a documentação vivem exclusivamente neste repositório.
 
 ## Objetivo
 
@@ -49,7 +49,23 @@ npm test
 npm run build
 ```
 
-O comando de build gera `dist/index.js`. Para um **teste manual** no Tabby oficial, execute `npm pack` (o pacote contém `dist`) e instale o pacote através do mecanismo de plugins do Tabby, ou configure `TABBY_PLUGINS` apontando para a pasta deste projeto. Nas configurações aparecerá uma aba **Profile Sharing**.
+O comando de build gera `dist/index.js`.
+
+### Instalação manual da preview 0.1.1 no Windows
+
+1. Baixe o ZIP do artefato [GitHub Actions](../../actions/workflows/test.yml) e extraia o ZIP interno `tabby-profile-share-plugin-0.1.1.zip`.
+2. Feche o Tabby completamente (inclusive ícone na bandeja).
+3. Copie somente a pasta extraída `tabby-profile-share` para `%APPDATA%\\tabby\\plugins\\node_modules\\`.
+4. Confirme que estes caminhos **existem**:
+   - `%APPDATA%\\tabby\\plugins\\node_modules\\tabby-profile-share\\package.json`
+   - `%APPDATA%\\tabby\\plugins\\node_modules\\tabby-profile-share\\dist\\index.js`
+5. Reabra o Tabby. Em **Settings → Plugins → Installed** procure `profile-share`. A aba **Profile Sharing** deve aparecer nas configurações.
+
+**Atenção:** Não coloque o plugin apenas em `%APPDATA%\\tabby\\plugins\\tabby-profile-share`: o Tabby procura pacotes pelo caminho `plugins\\node_modules`. Também evite aninhar duas pastas `tabby-profile-share`.
+
+O carregador do Tabby requer `author`, `keywords` e um `main` válido no `package.json`. O campo `author` ausente na versão 0.1.0 impedia a descoberta do plugin; corrigido na 0.1.1.
+
+Se não aparecer, abra o DevTools do Tabby e examine o Console por mensagens `Cannot load package info`, `Could not load profile-share` e `Loading profile-share`. Guarde o log para diagnóstico. A validação real da interface ainda é pendente.
 
 **Verificações antes de compartilhar pacotes:** examine o JSON gerado em uma base fictícia; confirme que a árvore, usernames e algoritmos necessários estão preservados, que os dados sensíveis estão ausentes, e teste a importação em um perfil separado do Tabby. Dependências e instalação no aplicativo real ainda exigem validação. O plugin propositalmente não exporta referências a chaves privadas nem comandos de proxy; essas configurações deverão ser refeitas localmente.
 
