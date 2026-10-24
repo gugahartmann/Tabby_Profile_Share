@@ -4,12 +4,16 @@
 
 [![CI](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml/badge.svg)](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/tabby-profile-share.svg)](https://www.npmjs.com/package/tabby-profile-share)
+[![npm downloads](https://img.shields.io/npm/dm/tabby-profile-share.svg)](https://www.npmjs.com/package/tabby-profile-share)
 
 [Português (Brasil)](README.pt-BR.md)
 
 Tabby Profile Share is an **independent, community-maintained plugin** for [Tabby by Eugeny](https://github.com/Eugeny/tabby). It does **not** modify Tabby, require the Tabby Performance fork, or have any affiliation with or endorsement from the Tabby maintainers.
 
-> **Status:** Preview 0.1.3 (unpublished) — manual installation and SSH export confirmed by an early tester. Wider compatibility, import scenarios and public npm publication remain separate validation steps. Do not assume all Tabby versions have been tested.
+**Available on npm:** [tabby-profile-share](https://www.npmjs.com/package/tabby-profile-share) · [GitHub releases](https://github.com/gugahartmann/Tabby_Profile_Share/releases) · [Report an issue](https://github.com/gugahartmann/Tabby_Profile_Share/issues/new/choose).
+
+Tested with the official Tabby **1.0.235** plugin manager on Windows for installation; broader host versions and end-to-end import flows require continued community testing.
 
 ## Features
 
@@ -29,19 +33,17 @@ The file contains **no stored credentials**, private key paths or login scripts.
 
 ## Installation compatibility
 
-Version 0.1.3 removes runtime Angular/Tabby peer requirements to prevent npm `ERESOLVE` when legacy plugins (e.g., `tabby-save-output@3.1.0` with Angular 4) are present. Tabby itself supplies Angular and the Tabby APIs when loading plugins. This change does not remove required development dependencies from the project, and does not fix security issues in legacy plugins.
+Versions 0.1.3+ remove runtime Angular/Tabby peer requirements to prevent npm `ERESOLVE` when legacy plugins (e.g., `tabby-save-output@3.1.0` with Angular 4) are present. Tabby itself supplies Angular and the Tabby APIs when loading plugins. This change does not remove required development dependencies from the project, and does not fix security issues in legacy plugins.
 
 ## Install
 
-### Once the package is available on npm
+Open **Tabby → Settings → Plugins → Available**, search for **profile-share**, select `tabby-profile-share`, click **Get**, and restart Tabby when prompted. The plugin is distributed through [npm](https://www.npmjs.com/package/tabby-profile-share) and does **not** require cloning this repository. The Tabby search ranking may place new plugins near the bottom of results. Once installed, open **Settings → Profile Sharing**.
 
-Open **Tabby → Settings → Plugins**, search for **profile-share**, install `tabby-profile-share`, and restart Tabby if requested. Tabby discovers community plugins distributed with the `tabby-plugin` npm keyword.
+If you prefer a compiled, standalone package, check [GitHub Releases](https://github.com/gugahartmann/Tabby_Profile_Share/releases). The manual Windows option remains available below.
 
-**Not yet published to npm:** Until the package appears in npm search, use the preview instructions below. Publishing status should not be inferred from this README.
+### Alternative: manual install on Windows
 
-### Preview: manual install on Windows
-
-1. Download the latest compiled ZIP from [Actions](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml) (or a future GitHub release).
+1. Download the **compiled plugin ZIP** from [Releases](https://github.com/gugahartmann/Tabby_Profile_Share/releases) or [Actions](https://github.com/gugahartmann/Tabby_Profile_Share/actions/workflows/test.yml).
 2. The Actions artifact contains another ZIP with a top-level directory called `tabby-profile-share`. Extract that directory.
 3. Close Tabby fully, including the tray icon, and copy the folder to:
    `%APPDATA%\tabby\plugins\node_modules\tabby-profile-share\`
@@ -50,6 +52,12 @@ Open **Tabby → Settings → Plugins**, search for **profile-share**, install `
 
 Do not install the directory one level too high, or nest `tabby-profile-share` twice.
 
+## Screenshots and demo profiles
+
+For screenshots, use the [**synthetic Tabby YAML configuration**](examples/demo-profiles.yaml) containing **16 example SSH profiles across nested regions, core/access networks and data centers**. All hosts use the reserved documentation IPv4 ranges or `.invalid` domains; there are **no real devices or credentials**.
+
+See the [screenshot guide](docs/SCREENSHOTS.md) to set up an isolated instance and capture the folder selector, username opt-in and import preview. **Do not replace your real `config.yaml` or upload an unredacted screenshot of production profiles.** Screenshots will be embedded in this README once captured and reviewed.
+
 ## Use
 
 **Export:** Select the folder tree, review the list of usernames (unchecked by default), explicitly enable only shared/team usernames, then click **Export**. Inspect the resulting JSON before distributing it.
@@ -57,12 +65,6 @@ Do not install the directory one level too high, or nest `tabby-profile-share` t
 **Import:** Make a backup of your Tabby configuration, open the **Import** tab, select the JSON, review its counts and confirm. The plugin adds new items; it does not replace existing entries. If any imported profiles lack usernames, it asks for one username to apply to those new profiles, or allows you to leave them blank.
 
 See the [functional specification](docs/SPEC.md) for detailed behavior. Import has automated unit coverage, but full UI regression across Tabby releases remains on the roadmap.
-
-## Publish via GitHub Actions (no local Git or Node.js required)
-
-Maintainers can prepare npm releases entirely in the browser with the **Stage npm package** workflow. The first release uses a temporary npm stage-only token in the repository secret `NPM_STAGE_TOKEN`; subsequent releases use npm Trusted Publishing (OIDC) with no permanent token. Every release is reviewed and approved on npmjs.com with 2FA before it goes live.
-
-See the [complete step-by-step npm GitHub Actions guide](docs/PUBLISHING.md). Publishing is manual and never triggered by pushes or pull requests.
 
 ## Development
 
@@ -79,7 +81,7 @@ npm pack --dry-run
 
 The production entry point is `dist/index.js`. Angular and Tabby dependencies are external to the generated bundle, loaded by the host Tabby application.
 
-The repository includes CI for unit tests, compilation and packaging. Before a public release, verify the packaged files, audit dependencies, and test import twice on a disposable Tabby configuration.
+The repository includes CI for unit tests, compilation, packaging, and compatibility with legacy Tabby plugins. Use a disposable Tabby configuration when testing imports. Project release procedures are documented in [docs/PUBLISHING.md](docs/PUBLISHING.md).
 
 ## Feedback and issue reports
 
