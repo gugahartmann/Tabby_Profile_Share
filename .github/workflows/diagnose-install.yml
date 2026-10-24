@@ -1,0 +1,34 @@
+name: Diagnose npm plugin installation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/diagnose-install.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install clean npm package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Try npm default peer resolution
+        shell: bash
+        run: |
+          mkdir -p /tmp/tabby-plugin-install
+          cd /tmp/tabby-plugin-install
+          printf '{"name":"tabby-plugin-install-smoke","version":"0.0.0","private":true}\n' > package.json
+          npm install --ignore-scripts --no-audit --no-fund --loglevel error tabby-profile-share@0.1.2 2>&1 | tee install.log
+          code=${PIPESTATUS[0]}
+          echo "INSTALL_EXIT_CODE=${code}"
+          if [ "${code}" -eq 0 ]; then
+            npm ls tabby-profile-share @angular/core @angular/common tabby-core tabby-settings --depth=0 || true
+          fi
+          exit 0
