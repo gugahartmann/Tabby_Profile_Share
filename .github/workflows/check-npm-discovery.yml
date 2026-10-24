@@ -25,6 +25,7 @@ jobs:
             ['npm install registry', 'https://registry.npmjs.org/tabby-profile-share/latest'],
             ['Tabby search (profile-share)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20profile-share&size=250'],
             ['Tabby search (tabby-profile-share)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20tabby-profile-share&size=250'],
+            ['Tabby search (gugahartmann)', 'https://registry.npmjs.com/-/v1/search?text=keywords%3Atabby-plugin%20gugahartmann&size=250'],
             ['npm exact search', 'https://registry.npmjs.org/-/v1/search?text=tabby-profile-share&size=50'],
           ]
           async function run () {
@@ -35,7 +36,7 @@ jobs:
                 const list = Array.isArray(data.objects) ? data.objects.filter(x => x.package?.name === pkg) : []
                 const details = name === 'npm install registry'
                   ? { version: data.version ?? null, keywords: data.keywords ?? null, name: data.name ?? null }
-                  : { totalResults: data.total ?? 0, foundExactPackage: list.length > 0, matchedVersion: list[0]?.package?.version ?? null }
+                  : { totalResults: data.total ?? 0, foundExactPackage: list.length > 0, matchedVersion: list[0]?.package?.version ?? null, resultRank: (data.objects || []).findIndex(x => x.package?.name === pkg) + 1, firstResults: (data.objects || []).slice(0,12).map(x => ({name:x.package?.name, score:x.searchScore})) }
                 console.log(JSON.stringify({ check: name, httpStatus: res.status, ...details }))
               } catch (err) { console.log(JSON.stringify({ check: name, error: String(err) })) }
             }
