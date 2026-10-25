@@ -1,0 +1,109 @@
+name: Stage Profile Bridge npm v0.2.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/npm-stage-requests/bridge-0.2.2.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage-npm-bridge-0.2.2
+  cancel-in-progress: false
+
+jobs:
+  stage-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository containing npm secret
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Checkout pinned Profile Bridge v0.2.2
+        uses: actions/checkout@v5
+        with:
+          repository: gugahartmann/Tabby-Profile-Bridge
+          ref: 7f6ddefaa192b532fcd032310d1b3dbd6d546db4
+          path: bridge
+          persist-credentials: false
+      - name: Verify exact package and staging authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "gugahartmann/Tabby_Profile_Share"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$(cat .github/npm-stage-requests/bridge-0.2.2.txt)" = "tabby-profile-bridge@0.2.2"
+          test "$(git -C bridge rev-parse HEAD)" = "7f6ddefaa192b532fcd032310d1b3dbd6d546db4"
+          node <<'NODE'
+          const fs = require('node:fs')
+          const p = JSON.parse(fs.readFileSync('bridge/package.json', 'utf8'))
+          if (p.name !== 'tabby-profile-bridge' || p.version !== '0.2.2' ||
+              p.private === true || p.license !== 'MIT' ||
+              p.publishConfig?.access !== 'public' ||
+              !p.keywords?.includes('tabby-plugin') ||
+              p.main !== 'dist/index.js') {
+            throw Error('Refusing to publish an unexpected package')
+          }
+          for (const f of ['LICENSE','README.md','README.pt-BR.md']) {
+            if (!fs.existsSync('bridge/' + f)) throw Error('Missing ' + f)
+          }
+          NODE
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Install npm CLI with staged publishing
+        run: npm install --global npm@11.21.1
+      - name: Install build dependencies without scripts
+        working-directory: bridge
+        run: npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - name: Verify, audit and compile
+        working-directory: bridge
+        run: |
+          npm test
+          npm audit --omit=dev --audit-level=high
+          npm run build
+      - name: Pack safely without scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd bridge
+          npm pack --ignore-scripts --pack-destination ..
+          cd ..
+          test -s tabby-profile-bridge-0.2.2.tgz
+          tar -tzf tabby-profile-bridge-0.2.2.tgz > /tmp/bridge-files.txt
+          for f in package/package.json package/README.md package/README.pt-BR.md package/LICENSE package/dist/index.js; do
+            grep -Fqx "$f" /tmp/bridge-files.txt
+          done
+          if grep -Ei '\.env$|\.pem$|\.key$|credential|\.mxtsessions$|demo-profiles' /tmp/bridge-files.txt; then
+            echo "::error::Potentially sensitive file in archive"
+            exit 1
+          fi
+          sha256sum tabby-profile-bridge-0.2.2.tgz
+      - name: Refuse already published version
+        shell: bash
+        run: |
+          if npm view tabby-profile-bridge@0.2.2 version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "::error::Version already published"
+            exit 1
+          fi
+      - name: Reuse existing stage-only npm secret from Profile Share
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_STAGE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
+            echo "::error::NPM_STAGE_TOKEN is missing. No publication occurred."
+            exit 1
+          fi
+          export NPM_CONFIG_USERCONFIG="$GITHUB_WORKSPACE/.npmrc"
+          npm stage publish ./tabby-profile-bridge-0.2.2.tgz --access public --tag latest --ignore-scripts
+      - name: Manual npm approval
+        run: |
+          echo "STAGED tabby-profile-bridge@0.2.2. NOT LIVE."
+          echo "Open npmjs.com -> Staged Packages -> Approve with 2FA."
