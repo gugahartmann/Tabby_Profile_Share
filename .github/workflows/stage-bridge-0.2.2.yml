@@ -35,7 +35,7 @@ jobs:
           set -euo pipefail
           test "$GITHUB_REPOSITORY" = "gugahartmann/Tabby_Profile_Share"
           test "$GITHUB_REF" = "refs/heads/main"
-          test "$(cat .github/npm-stage-requests/bridge-0.2.2.txt)" = "tabby-profile-bridge@0.2.2"
+          test "$(head -n 1 .github/npm-stage-requests/bridge-0.2.2.txt)" = "tabby-profile-bridge@0.2.2"
           test "$(git -C bridge rev-parse HEAD)" = "7f6ddefaa192b532fcd032310d1b3dbd6d546db4"
           node <<'NODE'
           const fs = require('node:fs')
@@ -101,7 +101,10 @@ jobs:
             echo "::error::NPM_STAGE_TOKEN is missing. No publication occurred."
             exit 1
           fi
-          export NPM_CONFIG_USERCONFIG="$GITHUB_WORKSPACE/.npmrc"
+          if [[ -z "${NPM_CONFIG_USERCONFIG:-}" || ! -f "${NPM_CONFIG_USERCONFIG}" ]]; then
+            echo "::error::Registry configuration file missing from setup-node."
+            exit 1
+          fi
           npm stage publish ./tabby-profile-bridge-0.2.2.tgz --access public --tag latest --ignore-scripts
       - name: Manual npm approval
         run: |
